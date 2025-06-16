@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError, catchError } from 'rxjs';
 import { Posts, Comments } from '../model/posts.model';
 import { environment } from '../../environments/environment';
@@ -12,9 +12,19 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  getPosts(): Observable<Posts[]> {
+  getPosts(limit: number = 20, page: number = 1): Observable<Posts[]> {
+    if (limit <= 0 || page <= 0) {
+      return throwError(
+        () => new Error('Limit and page must be positive numbers')
+      );
+    }
+    //using HttpParams to pass the limit and page as query parameters
+    const params = new HttpParams();
+    params.set('limit', limit.toString());
+    params.set('page', page.toString());
+
     return this.http
-      .get<Posts[]>(`${this.baseUrl}/posts`)
+      .get<Posts[]>(`${this.baseUrl}/posts`, { params })
       .pipe(catchError(this.errorHandler));
   }
 
