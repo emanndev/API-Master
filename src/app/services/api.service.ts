@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError, catchError } from 'rxjs';
-import { Posts } from '../model/posts.model';
+import { Posts, Comments } from '../model/posts.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  baseUrl = environment.apiUrl;
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -42,13 +42,19 @@ export class ApiService {
       .pipe(catchError(this.errorHandler));
   }
 
+  getComments(postId: number): Observable<Comments[]> {
+    return this.http
+      .get<Comments[]>(`${this.baseUrl}/posts/${postId}/comments`)
+      .pipe(catchError(this.errorHandler));
+  }
+
   errorHandler(error: any) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
       errorMessage = error.error.message;
     } else {
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      errorMessage = `Error Code: ${error.status}\nMessage: Failed to retrieve posts data`;
     }
-    return throwError(errorMessage);
+    return throwError(() => new Error(errorMessage));
   }
 }
