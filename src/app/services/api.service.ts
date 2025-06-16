@@ -24,6 +24,24 @@ export class ApiService {
       .pipe(catchError(this.errorHandler));
   }
 
+  createPost(post: Posts): Observable<Posts> {
+    return this.http
+      .post<Posts>(`${this.baseUrl}/posts`, post)
+      .pipe(catchError(this.errorHandler));
+  }
+
+  updatePosts(post: Posts): Observable<Posts> {
+    return this.http
+      .put<Posts>(`${this.baseUrl}/posts/${post.id}`, post)
+      .pipe(catchError(this.errorHandler));
+  }
+
+  deletePost(id: number): Observable<Posts> {
+    return this.http
+      .delete<Posts>(`${this.baseUrl}/posts/${id}`)
+      .pipe(catchError(this.errorHandler));
+  }
+
   errorHandler(error: any) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
