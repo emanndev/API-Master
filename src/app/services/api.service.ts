@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, throwError, catchError } from 'rxjs';
-import { Posts, Comments } from '../model/posts.model';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { Posts, Comments } from '../model/posts.model';
+import { ErrorHandlingService } from './error-handling.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -10,70 +13,88 @@ import { environment } from '../../environments/environment';
 export class ApiService {
   private baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
-
+  constructor(
+    private http: HttpClient,
+    private errorHandling: ErrorHandlingService
+  ) {}
   getPosts(limit: number = 20, page: number = 1): Observable<Posts[]> {
     if (limit <= 0 || page <= 0) {
       return throwError(
         () => new Error('Limit and page must be positive numbers')
       );
     }
-    //using HttpParams to pass the limit and page as query parameters
-    const params = new HttpParams();
-    params.set('limit', limit.toString());
-    params.set('page', page.toString());
-
-    return this.http
-      .get<Posts[]>(`${this.baseUrl}/posts`, { params })
-      .pipe(catchError(this.errorHandler));
+    return this.http.get<Posts[]>(`${this.baseUrl}/posts`).pipe(
+      this.errorHandling.retryRequest(2),
+      map((data: Posts[]) =>
+        data.map(
+          (post) =>
+            ({
+              ...post,
+              imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
+            } as Posts)
+        )
+      ),
+      catchError(this.errorHandling.handleError)
+    );
   }
 
   getPost(id: number): Observable<Posts> {
-    return this.http
-      .get<Posts>(`${this.baseUrl}/posts/${id}`)
-      .pipe(catchError(this.errorHandler));
+    return this.http.get<Posts>(`${this.baseUrl}/posts/${id}`).pipe(
+      this.errorHandling.retryRequest(2),
+      map(
+        (post: Posts) =>
+          ({
+            ...post,
+            imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
+          } as Posts)
+      ),
+      catchError(this.errorHandling.handleError)
+    );
   }
 
-  createPost(post: Posts): Observable<Posts> {
+  createPost(post: Partial<Posts>): Observable<Posts> {
     return this.http
-      .post<Posts>(`${this.baseUrl}/posts`, post)
-      .pipe(catchError(this.errorHandler));
+      .post<Posts>(`${this.baseUrl}/posts`, {
+        userId: 1,
+        title: post.title,
+        body: post.body,
+      })
+      .pipe(catchError(this.errorHandling.handleError));
   }
 
-  updatePosts(post: Posts): Observable<Posts> {
+  updatePosts(post: Partial<Posts>): Observable<Posts> {
     return this.http
-      .put<Posts>(`${this.baseUrl}/posts/${post.id}`, post)
-      .pipe(catchError(this.errorHandler));
+      .put<Posts>(`${this.baseUrl}/posts/${post.id}`, {
+        userId: post.userId || 1,
+        title: post.title,
+        body: post.body,
+      })
+      .pipe(catchError(this.errorHandling.handleError));
   }
 
-  deletePost(id: number): Observable<Posts> {
+  deletePost(id: number): Observable<any> {
     return this.http
-      .delete<Posts>(`${this.baseUrl}/posts/${id}`)
-      .pipe(catchError(this.errorHandler));
+      .delete<any>(`${this.baseUrl}/posts/${id}`)
+      .pipe(catchError(this.errorHandling.handleError));
   }
 
   getComments(postId: number): Observable<Comments[]> {
     return this.http
-      .get<Comments[]>(`${this.baseUrl}/posts/${postId}/comments`)
-      .pipe(catchError(this.errorHandler));
+      .get<Comments[]>(`${this.baseUrl}/comments?postId=${postId}`)
+      .pipe(
+        this.errorHandling.retryRequest(2),
+        catchError(this.errorHandling.handleError)
+      );
   }
 
-  createComments(comment: Comments): Observable<Comments> {
+  createComments(comment: Partial<Comments>): Observable<Comments> {
     return this.http
-      .post<Comments>(
-        `${this.baseUrl}/posts/${comment.postId}/comments`,
-        comment
-      )
-      .pipe(catchError(this.errorHandler));
-  }
-
-  errorHandler(error: any) {
-    let errorMessage = '';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
-    } else {
-      errorMessage = `Error Code: ${error.status}\nMessage: Failed to retrieve posts data`;
-    }
-    return throwError(() => new Error(errorMessage));
+      .post<Comments>(`${this.baseUrl}/comments`, {
+        postId: comment.postId,
+        name: comment.name,
+        email: `${comment.name?.toLowerCase()}@example.com`,
+        body: comment.body,
+      })
+      .pipe(catchError(this.errorHandling.handleError));
   }
 }
