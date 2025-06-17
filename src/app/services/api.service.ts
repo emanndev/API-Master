@@ -12,7 +12,7 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  getPosts(limit: number = 20, page: number = 1): Observable<Posts[]> {
+  getPosts(limit: number = 10, page: number = 1): Observable<Posts[]> {
     if (limit <= 0 || page <= 0) {
       return throwError(
         () => new Error('Limit and page must be positive numbers')
@@ -24,7 +24,7 @@ export class ApiService {
     params.set('page', page.toString());
 
     return this.http
-      .get<Posts[]>(`${this.baseUrl}/posts`, { params })
+      .get<Posts[]>(`${this.baseUrl}/posts?_page=${page}&_limit=${limit}`)
       .pipe(catchError(this.errorHandler));
   }
 

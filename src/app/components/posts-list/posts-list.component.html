@@ -1,13 +1,18 @@
 <div class="posts-list">
   <h2>Blog Posts</h2>
   <div class="controls">
-    <input type="text" class="search-bar" placeholder="Search posts..." />
-    <select class="filter-select">
+    <input
+      type="text"
+      class="search-bar"
+      placeholder="Search posts..."
+      (input)="onSearch($event)"
+    />
+    <select class="filter-select" (change)="onFilter($event)">
       <option value="">All Categories</option>
       <option value="Tech">Tech</option>
       <option value="Lifestyle">Lifestyle</option>
     </select>
-    <select class="sort-select">
+    <select class="sort-select" (change)="onSort($event)">
       <option value="newest">Newest</option>
       <option value="oldest">Oldest</option>
     </select>
