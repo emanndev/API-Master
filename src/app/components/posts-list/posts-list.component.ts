@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { Posts } from '../../model/posts.model';
-import { Router, RouterLink } from '@angular/router';
+import { RouterModule, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-posts-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterModule, RouterLink],
   templateUrl: './posts-list.component.html',
   styleUrl: './posts-list.component.scss',
 })
@@ -21,7 +21,7 @@ export class PostsListComponent implements OnInit {
   }
 
   loadPosts() {
-    this.apiService.getPosts(10, 1).subscribe((posts) => {
+    this.apiService.getPosts().subscribe((posts) => {
       this.posts = posts;
     });
   }

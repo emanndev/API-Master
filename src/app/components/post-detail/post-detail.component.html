@@ -1,1 +1,16 @@
-<p>post-detail works!</p>
+<div class="post-detail" *ngIf="post">
+  <h2>{{ post.title }}</h2>
+  <p>{{ post.body }}</p>
+  <h3>Comments</h3>
+  <ul>
+    <li *ngFor="let comment of comments">{{ comment.body }}</li>
+  </ul>
+  <div class="comment-form">
+    <input [(ngModel)]="newComment.name" placeholder="Your Name" />
+    <textarea
+      [(ngModel)]="newComment.body"
+      placeholder="Your Comment"
+    ></textarea>
+    <button (click)="addComment()">Add Comment</button>
+  </div>
+</div>

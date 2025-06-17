@@ -58,6 +58,15 @@ export class ApiService {
       .pipe(catchError(this.errorHandler));
   }
 
+  createComments(comment: Comments): Observable<Comments> {
+    return this.http
+      .post<Comments>(
+        `${this.baseUrl}/posts/${comment.postId}/comments`,
+        comment
+      )
+      .pipe(catchError(this.errorHandler));
+  }
+
   errorHandler(error: any) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
