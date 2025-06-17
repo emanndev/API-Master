@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Posts, Comments } from '../model/posts.model';
@@ -11,11 +11,26 @@ import { ErrorHandlingService } from './error-handling.service';
 })
 export class ApiService {
   private baseUrl = environment.apiUrl;
+  private storageKey = 'blogPosts';
 
   constructor(
     private http: HttpClient,
     private errorHandling: ErrorHandlingService
-  ) {}
+  ) {
+    this.initializeLocalStorage();
+  }
+
+  private initializeLocalStorage() {
+    if (!localStorage.getItem(this.storageKey)) {
+      this.loadInitialData();
+    }
+  }
+
+  private loadInitialData() {
+    this.getPosts().subscribe((posts) => {
+      localStorage.setItem(this.storageKey, JSON.stringify(posts));
+    });
+  }
 
   getPosts(limit: number = 20, page: number = 1): Observable<Posts[]> {
     if (limit <= 0 || page <= 0) {
@@ -23,8 +38,14 @@ export class ApiService {
         () => new Error('Limit and page must be positive numbers')
       );
     }
+    const storedPosts = JSON.parse(
+      localStorage.getItem(this.storageKey) || '[]'
+    );
     return this.errorHandling
-      .retryRequest(this.http.get<Posts[]>(`${this.baseUrl}/posts`), 2)
+      .retryRequest(
+        of(storedPosts),
+        0 // No retries for local data
+      )
       .pipe(
         map((data: Posts[]) =>
           data.map(
@@ -40,44 +61,62 @@ export class ApiService {
   }
 
   getPost(id: number): Observable<Posts> {
-    return this.errorHandling
-      .retryRequest(this.http.get<Posts>(`${this.baseUrl}/posts/${id}`), 2)
-      .pipe(
-        map(
-          (post: Posts) =>
-            ({
-              ...post,
-              imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
-            } as Posts)
-        ),
-        catchError(this.errorHandling.handleError)
-      );
+    const storedPosts = JSON.parse(
+      localStorage.getItem(this.storageKey) || '[]'
+    );
+    const post = storedPosts.find((p: Posts) => p.id === id);
+    if (!post) {
+      return throwError(() => new Error('Post not found'));
+    }
+    return of({
+      ...post,
+      imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
+    } as Posts).pipe(catchError(this.errorHandling.handleError));
   }
 
   createPost(post: Partial<Posts>): Observable<Posts> {
-    return this.http
-      .post<Posts>(`${this.baseUrl}/posts`, {
-        userId: 1, // Mock userId
-        title: post.title,
-        body: post.body,
-      })
-      .pipe(catchError(this.errorHandling.handleError));
+    const storedPosts = JSON.parse(
+      localStorage.getItem(this.storageKey) || '[]'
+    );
+    const newId =
+      storedPosts.length > 0
+        ? Math.max(...storedPosts.map((p: Posts) => p.id)) + 1
+        : 1;
+    const newPost = {
+      id: newId,
+      userId: 1,
+      ...post,
+      imageUrl: `https://picsum.photos/400/200?random=${newId}`,
+    } as Posts;
+    storedPosts.push(newPost);
+    localStorage.setItem(this.storageKey, JSON.stringify(storedPosts));
+    return of(newPost);
   }
 
   updatePosts(post: Partial<Posts>): Observable<Posts> {
-    return this.http
-      .put<Posts>(`${this.baseUrl}/posts/${post.id}`, {
-        userId: post.userId || 1,
-        title: post.title,
-        body: post.body,
-      })
-      .pipe(catchError(this.errorHandling.handleError));
+    const storedPosts = JSON.parse(
+      localStorage.getItem(this.storageKey) || '[]'
+    );
+    const index = storedPosts.findIndex((p: Posts) => p.id === post.id);
+    if (index !== -1) {
+      storedPosts[index] = {
+        ...storedPosts[index],
+        ...post,
+        imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
+      } as Posts;
+      localStorage.setItem(this.storageKey, JSON.stringify(storedPosts));
+      return of(storedPosts[index]);
+    }
+    return throwError(() => new Error('Post not found'));
   }
 
   deletePost(id: number): Observable<any> {
-    return this.http
-      .delete<any>(`${this.baseUrl}/posts/${id}`)
-      .pipe(catchError(this.errorHandling.handleError));
+    const storedPosts = JSON.parse(
+      localStorage.getItem(this.storageKey) || '[]'
+    );
+    const newPosts = storedPosts.filter((p: Posts) => p.id !== id);
+    localStorage.setItem(this.storageKey, JSON.stringify(newPosts));
+    return of({ success: true });
   }
 
   getComments(postId: number): Observable<Comments[]> {
