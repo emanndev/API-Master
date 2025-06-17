@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './post-detail.component.html',
-  styleUrl: './post-detail.component.scss',
+  styleUrls: ['./post-detail.component.scss'],
 })
 export class PostDetailComponent implements OnInit {
   post!: Posts;
@@ -27,26 +27,37 @@ export class PostDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id')!;
-    this.apiService.getPost(id).subscribe((data) => (this.post = data));
-    this.apiService.getComments(id).subscribe((data) => (this.comments = data));
+    this.apiService.getPost(id).subscribe({
+      next: (data) => (this.post = data),
+      error: (err) => console.error('Failed to load post:', err),
+    });
+    this.apiService.getComments(id).subscribe({
+      next: (data) => (this.comments = data),
+      error: (err) => console.error('Failed to load comments:', err),
+    });
     this.newComment.postId = id;
   }
 
   addComment() {
-    this.apiService
-      .createComments({
-        ...this.newComment,
-        email: `${this.newComment.name}@example.com`,
-      })
-      .subscribe((comment) => {
-        this.comments.push(comment);
-        this.newComment = {
-          postId: this.post.id,
-          id: 0,
-          name: '',
-          email: '',
-          body: '',
-        };
-      });
+    if (this.newComment.name && this.newComment.body) {
+      this.apiService
+        .createComments({
+          ...this.newComment,
+          email: `${this.newComment.name}@example.com`,
+        })
+        .subscribe({
+          next: (comment) => {
+            this.comments.push(comment);
+            this.newComment = {
+              postId: this.post.id,
+              id: 0,
+              name: '',
+              email: '',
+              body: '',
+            };
+          },
+          error: (err) => console.error('Failed to add comment:', err),
+        });
+    }
   }
 }
