@@ -41,23 +41,18 @@ export class ApiService {
     const storedPosts = JSON.parse(
       localStorage.getItem(this.storageKey) || '[]'
     );
-    return this.errorHandling
-      .retryRequest(
-        of(storedPosts),
-        0 // No retries for local data
-      )
-      .pipe(
-        map((data: Posts[]) =>
-          data.map(
-            (post) =>
-              ({
-                ...post,
-                imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
-              } as Posts)
-          )
-        ),
-        catchError(this.errorHandling.handleError)
-      );
+    return this.errorHandling.retryRequest(of(storedPosts), 0).pipe(
+      map((data: Posts[]) =>
+        data.map(
+          (post) =>
+            ({
+              ...post,
+              imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
+            } as Posts)
+        )
+      ),
+      catchError(this.errorHandling.handleError)
+    );
   }
 
   getPost(id: number): Observable<Posts> {
