@@ -18,8 +18,11 @@ export class ErrorHandlingService {
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
-  retryRequest(observable: any, retries: number = 1): any {
+
+  retryRequest<T>(
+    observable: Observable<T>,
+    retries: number = 1
+  ): Observable<T> {
     return observable.pipe(retry(retries));
   }
-  constructor() {}
 }

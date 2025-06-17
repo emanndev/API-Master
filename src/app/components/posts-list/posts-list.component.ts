@@ -2,21 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { Posts } from '../../model/posts.model';
-import { RouterModule, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-posts-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './posts-list.component.html',
-  styleUrl: './posts-list.component.scss',
+  styleUrls: ['./posts-list.component.scss'],
 })
 export class PostsListComponent implements OnInit {
   posts: Posts[] = [];
-  filteredPosts: any[] = [];
+  filteredPosts: Posts[] = [];
   currentPage: number = 1;
   totalPages: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 5;
   filterCategory: string = '';
   searchTerm: string = '';
   sortOrder: string = 'newest';
@@ -28,15 +29,23 @@ export class PostsListComponent implements OnInit {
   }
 
   loadPosts() {
-    this.apiService.getPosts().subscribe((posts) => {
-      this.posts = posts;
+    this.apiService.getPosts().subscribe({
+      next: (posts) => {
+        this.posts = posts.map((post) => ({
+          ...post,
+          category: this.getRandomCategory(),
+        }));
+        this.applyFilters();
+      },
+      error: (err) => console.error('Failed to load posts:', err),
     });
   }
 
   applyFilters() {
     this.filteredPosts = this.posts.filter((post) => {
       const matchesCategory =
-        !this.filterCategory || post.category === this.filterCategory;
+        !this.filterCategory ||
+        (post.category && post.category === this.filterCategory);
       const matchesSearch =
         !this.searchTerm ||
         post.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -73,9 +82,20 @@ export class PostsListComponent implements OnInit {
   }
 
   updatePage() {
-    this.filteredPosts = this.filteredPosts.slice(
-      (this.currentPage - 1) * this.pageSize,
-      this.currentPage * this.pageSize
-    );
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.filteredPosts = this.filteredPosts.slice(start, end);
+  }
+
+  onPageChange(page: number) {
+    if (page > 0 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePage();
+    }
+  }
+
+  private getRandomCategory(): string {
+    const categories = ['Tech', 'Lifestyle'];
+    return categories[Math.floor(Math.random() * categories.length)];
   }
 }

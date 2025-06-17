@@ -1,6 +1,6 @@
 <div class="posts-list">
-  <h2>Blog Posts</h2>
-  <div class="controls">
+  <h2 class="fade-in">Blog Posts</h2>
+  <div class="controls slide-in">
     <input
       type="text"
       class="search-bar"
@@ -17,9 +17,20 @@
       <option value="oldest">Oldest</option>
     </select>
   </div>
-  <div *ngFor="let post of posts" class="post-item">
+  <div
+    *ngFor="let post of filteredPosts; let i = index"
+    class="post-item slide-up"
+    [style.animation-delay]="i * 0.1 + 's'"
+  >
+    <img
+      [src]="post.imageUrl || 'https://via.placeholder.com/400x200'"
+      alt="{{ post.title }}"
+      class="post-image"
+    />
     <h3>{{ post.title }}</h3>
-    <p>{{ post.body }}</p>
-    <a [routerLink]="['/post', post.id]">Read More</a>
+    <p>
+      {{ post.body | slice : 0 : 100 }}{{ post.body.length > 100 ? "..." : "" }}
+    </p>
+    <a [routerLink]="['/post', post.id]" class="read-more">Read More</a>
   </div>
 </div>
