@@ -4,11 +4,12 @@ import { ApiService } from '../../services/api.service';
 import { Posts } from '../../model/posts.model';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { PaginationComponent } from '../pagination/pagination.component';
 
 @Component({
   selector: 'app-posts-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, PaginationComponent],
   templateUrl: './posts-list.component.html',
   styleUrls: ['./posts-list.component.scss'],
 })

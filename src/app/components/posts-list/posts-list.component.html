@@ -33,4 +33,11 @@
     </p>
     <a [routerLink]="['/post', post.id]" class="read-more">Read More</a>
   </div>
+  <app-pagination
+    *ngIf="totalPages > 1"
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    (pageChange)="onPageChange($event)"
+    class="fade-in"
+  ></app-pagination>
 </div>
