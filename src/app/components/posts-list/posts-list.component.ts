@@ -91,7 +91,7 @@ export class PostsListComponent implements OnInit {
   onPageChange(page: number) {
     if (page > 0 && page <= this.totalPages) {
       this.currentPage = page;
-      this.updatePage();
+      this.applyFilters();
     }
   }
 
