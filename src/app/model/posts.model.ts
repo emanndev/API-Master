@@ -3,6 +3,8 @@ export interface Posts {
   id: number;
   title: string;
   body: string;
+  imageUrl?: string;
+  category?: string;
 }
 
 export interface Comments {
