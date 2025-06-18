@@ -98,19 +98,7 @@ export class PostDetailComponent implements OnInit {
       this.promptLogin();
       return;
     }
-    this.editForm.patchValue({
-      title: this.post.title,
-      body: this.post.body,
-      imageUrl: this.post.imageUrl || '',
-    });
-    this.initializeCommentsFormArray(this.comments);
-    this.imagePreview = this.sanitizerService.sanitizeUrl(
-      this.post.imageUrl || ''
-    );
-    this.editForm.get('imageUrl')?.valueChanges.subscribe((url) => {
-      this.imagePreview = this.sanitizerService.sanitizeUrl(url || '');
-    });
-    this.showEditModal = true;
+    this.router.navigate(['edit-post', this.post.id]);
   }
 
   saveEdit() {

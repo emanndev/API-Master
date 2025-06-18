@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { PostsListComponent } from './components/posts-list/posts-list.component';
 import { PostDetailComponent } from './components/post-detail/post-detail.component';
 import { CreatePostComponent } from './components/create-post/create-post.component';
+import { EditPostComponent } from './components/edit-post/edit-post.component';
 import { LoginComponent } from './components/login/login.component';
 
 export const routes: Routes = [
@@ -20,5 +21,9 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'edit-post/:id',
+    component: EditPostComponent,
   },
 ];
