@@ -44,7 +44,11 @@
       class="post-item slide-up"
       [style.animation-delay]="i * 0.1 + 's'"
     >
-      <img [src]="post.imageUrl" alt="{{ post.title }}" class="post-image" />
+      <img
+        [src]="post.imageUrl || 'https://via.placeholder.com/300x200'"
+        alt="{{ post.title }}"
+        class="post-image"
+      />
       <h3>{{ post.title }}</h3>
       <p>
         {{ post.body | slice : 0 : 100

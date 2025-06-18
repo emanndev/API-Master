@@ -29,7 +29,7 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     }
 
-    // Handled the request
+    // Handle 401 errors
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {

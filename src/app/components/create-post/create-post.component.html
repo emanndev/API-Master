@@ -1,12 +1,25 @@
 <div class="create-post">
   <h2>Create New Post</h2>
-  <form (ngSubmit)="onSubmit()" class="create-form">
-    <input [(ngModel)]="newPost.title" placeholder="Title" required />
+  <form class="create-form" (ngSubmit)="onSubmit()">
+    <input
+      type="text"
+      [(ngModel)]="newPost.title"
+      name="title"
+      placeholder="Enter post title"
+      required
+    />
     <textarea
       [(ngModel)]="newPost.body"
-      placeholder="Content"
+      name="body"
+      placeholder="Enter post content"
       required
     ></textarea>
+    <input
+      type="url"
+      [(ngModel)]="newPost.imageUrl"
+      name="imageUrl"
+      placeholder="Enter image URL (optional)"
+    />
     <button type="submit">Create Post</button>
   </form>
 </div>
