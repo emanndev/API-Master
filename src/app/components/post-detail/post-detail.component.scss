@@ -81,8 +81,13 @@
       cursor: pointer;
       transition: background 0.3s ease;
 
-      &:hover {
+      &:hover:not(:disabled) {
         background: #27ae60;
+      }
+
+      &:disabled {
+        background: #d3d3d3;
+        cursor: not-allowed;
       }
     }
 
@@ -95,8 +100,28 @@
       cursor: pointer;
       transition: background 0.3s ease;
 
-      &:hover {
+      &:hover:not(:disabled) {
         background: #c0392b;
+      }
+
+      &:disabled {
+        background: #d3d3d3;
+        cursor: not-allowed;
+      }
+    }
+
+    .login-button {
+      background: #3498db;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: #2980b9;
       }
     }
   }
@@ -115,59 +140,79 @@
 
     .modal-content {
       background: #fff;
-      padding: 20px;
+      padding: 30px;
       border-radius: 10px;
-      width: 500px;
+      width: 600px;
       max-width: 90%;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 
       h3 {
         color: #1a2a44;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         font-size: 1.5em;
       }
 
-      input,
-      textarea {
-        width: 80%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #e0e6ed;
-        border-radius: 5px;
-        font-size: 1em;
+      .form-group {
+        margin-bottom: 15px;
 
-        &:focus {
-          outline: none;
-          border-color: #2ecc71;
+        label {
+          display: block;
+          color: #1a2a44;
+          margin-bottom: 5px;
+          font-weight: 500;
+        }
+
+        input,
+        textarea {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #e0e6ed;
+          border-radius: 5px;
+          font-size: 1em;
+
+          &:focus {
+            outline: none;
+            border-color: #2ecc71;
+          }
+        }
+
+        textarea {
+          height: 100px;
+          resize: vertical;
         }
       }
 
-      .save-btn {
-        background: #2ecc71;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s ease;
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
 
-        &:hover {
-          background: #27ae60;
+        .save-btn {
+          background: #2ecc71;
+          color: #fff;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background 0.3s ease;
+
+          &:hover {
+            background: #27ae60;
+          }
         }
-      }
 
-      .close-btn {
-        background: #e74c3c;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-left: 10px;
-        transition: background 0.3s ease;
+        .close-btn {
+          background: #e74c3c;
+          color: #fff;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background 0.3s ease;
 
-        &:hover {
-          background: #c0392b;
+          &:hover {
+            background: #c0392b;
+          }
         }
       }
     }
@@ -192,14 +237,15 @@
     }
 
     .button-group .edit-btn,
-    .button-group .delete-btn {
+    .button-group .delete-btn,
+    .button-group .login-button {
       padding: 8px 15px;
       font-size: 0.9em;
     }
 
     .modal .modal-content {
       width: 90%;
-      padding: 15px;
+      padding: 20px;
     }
   }
 

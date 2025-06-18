@@ -19,9 +19,24 @@
     <a
       routerLink="/create-post"
       class="create-button"
-      *ngIf="authService.isAuthenticated()"
+      [class.disabled]="!authService.isAuthenticated()"
+      (click)="!authService.isAuthenticated() && promptLogin()"
       >Create New Post</a
     >
+    <button
+      class="login-button"
+      *ngIf="!authService.isAuthenticated()"
+      routerLink="/login"
+    >
+      Login
+    </button>
+    <button
+      class="logout-button"
+      *ngIf="authService.isAuthenticated()"
+      (click)="logout()"
+    >
+      Logout
+    </button>
   </div>
   <div class="posts-container">
     <div

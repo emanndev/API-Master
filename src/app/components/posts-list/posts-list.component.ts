@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { Posts } from '../../model/posts.model';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { AuthService } from '../../services/auth.service';
 import {
@@ -34,7 +34,7 @@ export class PostsListComponent implements OnInit {
   filteredPosts: Posts[] = [];
   currentPage: number = 1;
   totalPages: number = 1;
-  pageSize: number = 5;
+  pageSize: number = 6;
   filterCategory: string = '';
   searchTerm: string = '';
   sortOrder: string = 'newest';
@@ -42,7 +42,8 @@ export class PostsListComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    public authService: AuthService
+    public authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -120,6 +121,18 @@ export class PostsListComponent implements OnInit {
     this.apiService.clearCache();
     this.showMessage = true;
     setTimeout(() => (this.showMessage = false), 3000);
+  }
+
+  promptLogin() {
+    if (confirm('You must log in to create a post. Go to login page?')) {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  logout() {
+    this.authService.logout();
+    window.alert('Logged out successfully!');
+    this.router.navigate(['/']);
   }
 
   private getRandomCategory(): string {

@@ -70,8 +70,49 @@
       font-weight: 500;
       transition: background 0.3s ease, transform 0.3s ease;
 
-      &:hover {
+      &:hover:not(.disabled) {
         background: #c0392b;
+        transform: translateY(-2px);
+      }
+
+      &.disabled {
+        background: #d3d3d3;
+        cursor: not-allowed;
+        pointer-events: auto;
+      }
+    }
+
+    .login-button {
+      padding: 12px 20px;
+      background: #2ecc71;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.3s ease;
+
+      &:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+      }
+    }
+
+    .logout-button {
+      padding: 12px 20px;
+      background: #e67e22;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+
+      &:hover {
+        background: #d35400;
         transform: translateY(-2px);
       }
     }

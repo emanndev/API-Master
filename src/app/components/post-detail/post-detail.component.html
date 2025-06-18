@@ -25,14 +25,33 @@
   </ul>
 
   <div class="button-group">
-    <button class="edit-btn" (click)="openEditModal()">Edit Post</button>
-    <button class="delete-btn" (click)="deletePost()">Delete Post</button>
+    <button
+      class="edit-btn"
+      (click)="openEditModal()"
+      [disabled]="!authService.isAuthenticated()"
+    >
+      Edit Post
+    </button>
+    <button
+      class="delete-btn"
+      (click)="deletePost()"
+      [disabled]="!authService.isAuthenticated()"
+    >
+      Delete Post
+    </button>
+    <button
+      class="login-button"
+      *ngIf="!authService.isAuthenticated()"
+      routerLink="/login"
+    >
+      Login
+    </button>
   </div>
 
   <!-- Edit Modal -->
   <div class="modal" *ngIf="showEditModal" (click)="showEditModal = false">
     <div class="modal-content" (click)="$event.stopPropagation()">
-      <h3>Edit Post</h3>
+      <h3>Edit Post and Comments</h3>
       <div class="form-group">
         <label for="edit-title">Title:</label>
         <input

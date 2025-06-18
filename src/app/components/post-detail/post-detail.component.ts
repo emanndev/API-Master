@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Posts, Comments } from '../../model/posts.model';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-post-detail',
@@ -22,7 +23,8 @@ export class PostDetailComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +43,10 @@ export class PostDetailComponent implements OnInit {
   }
 
   openEditModal() {
+    if (!this.authService.isAuthenticated()) {
+      this.promptLogin();
+      return;
+    }
     this.editedPost = { ...this.post };
     this.editedComments = this.comments.map((comment) => ({ ...comment }));
     this.showEditModal = true;
@@ -51,7 +57,7 @@ export class PostDetailComponent implements OnInit {
       this.apiService.updatePosts(this.editedPost).subscribe({
         next: (updatedPost) => {
           this.post = updatedPost;
-          this.comments = this.editedComments as Comments[]; // Update comments locally
+          this.comments = this.editedComments as Comments[];
           this.showEditModal = false;
           window.alert('Post and comments updated successfully!');
         },
@@ -61,14 +67,24 @@ export class PostDetailComponent implements OnInit {
   }
 
   deletePost() {
+    if (!this.authService.isAuthenticated()) {
+      this.promptLogin();
+      return;
+    }
     if (confirm('Are you sure you want to delete this post?')) {
       this.apiService.deletePost(this.post.id).subscribe({
         next: () => {
           window.alert('Post deleted successfully!');
-          this.router.navigate(['/']); // Go back to posts list
+          this.router.navigate(['/']);
         },
         error: (err) => console.error('Failed to delete post:', err),
       });
+    }
+  }
+
+  promptLogin() {
+    if (confirm('You must log in to perform this action. Go to login page?')) {
+      this.router.navigate(['/login']);
     }
   }
 
