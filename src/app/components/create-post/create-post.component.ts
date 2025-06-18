@@ -1,37 +1,74 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-import { Posts } from '../../model/posts.model';
 import { AuthService } from '../../services/auth.service';
+import { SanitizerService } from '../../services/sanitizer.service';
+import { restrictedContentValidator } from '../../validator/validators';
+import { SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-create-post',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './create-post.component.html',
   styleUrls: ['./create-post.component.scss'],
 })
-export class CreatePostComponent {
-  newPost: Partial<Posts> = { title: '', body: '', imageUrl: '' };
+export class CreatePostComponent implements OnInit {
+  postForm: FormGroup;
+  imagePreview: SafeUrl = '';
 
   constructor(
+    private fb: FormBuilder,
     private apiService: ApiService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private sanitizerService: SanitizerService
   ) {
+    this.postForm = this.fb.group({
+      title: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(5),
+          restrictedContentValidator(),
+        ],
+      ],
+      body: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(20),
+          restrictedContentValidator(),
+        ],
+      ],
+      imageUrl: [''],
+    });
+
     // Redirect to login if not authenticated
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
     }
   }
 
+  ngOnInit(): void {
+    // Update image preview on imageUrl changes
+    this.postForm.get('imageUrl')?.valueChanges.subscribe((url) => {
+      this.imagePreview = this.sanitizerService.sanitizeUrl(url || '');
+    });
+  }
+
   onSubmit() {
-    if (this.newPost.title && this.newPost.body) {
-      this.apiService.createPost(this.newPost).subscribe({
-        next: (createdPost) => {
-          this.newPost = { title: '', body: '', imageUrl: '' };
+    if (this.postForm.valid) {
+      const post = this.postForm.value;
+      this.apiService.createPost(post).subscribe({
+        next: () => {
           window.alert('Post created successfully!');
           this.router.navigate(['/']);
         },
@@ -41,7 +78,7 @@ export class CreatePostComponent {
         },
       });
     } else {
-      window.alert('Please fill in all required fields.');
+      window.alert('Please correct the errors in the form.');
     }
   }
 }

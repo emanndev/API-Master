@@ -1,25 +1,63 @@
 <div class="create-post">
   <h2>Create New Post</h2>
-  <form class="create-form" (ngSubmit)="onSubmit()">
-    <input
-      type="text"
-      [(ngModel)]="newPost.title"
-      name="title"
-      placeholder="Enter post title"
-      required
-    />
-    <textarea
-      [(ngModel)]="newPost.body"
-      name="body"
-      placeholder="Enter post content"
-      required
-    ></textarea>
-    <input
-      type="url"
-      [(ngModel)]="newPost.imageUrl"
-      name="imageUrl"
-      placeholder="Enter image URL (optional)"
-    />
-    <button type="submit">Create Post</button>
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="create-form">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input
+        id="title"
+        formControlName="title"
+        placeholder="Enter post title"
+      />
+      <div
+        *ngIf="postForm.get('title')?.invalid && postForm.get('title')?.touched"
+        class="error"
+      >
+        <span *ngIf="postForm.get('title')?.errors?.['required']"
+          >Title is required.</span
+        >
+        <span *ngIf="postForm.get('title')?.errors?.['minlength']"
+          >Title must be at least 5 characters.</span
+        >
+        <span
+          *ngIf="postForm.get('title')?.errors?.['restrictedContent']"
+          >{{ postForm.get('title')?.errors?.['restrictedContent'] }}</span
+        >
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="body">Body</label>
+      <textarea
+        id="body"
+        formControlName="body"
+        placeholder="Enter post content"
+      ></textarea>
+      <div
+        *ngIf="postForm.get('body')?.invalid && postForm.get('body')?.touched"
+        class="error"
+      >
+        <span *ngIf="postForm.get('body')?.errors?.['required']"
+          >Body is required.</span
+        >
+        <span *ngIf="postForm.get('body')?.errors?.['minlength']"
+          >Body must be at least 20 characters.</span
+        >
+        <span
+          *ngIf="postForm.get('body')?.errors?.['restrictedContent']"
+          >{{ postForm.get('body')?.errors?.['restrictedContent'] }}</span
+        >
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="imageUrl">Image URL (optional)</label>
+      <input
+        id="imageUrl"
+        formControlName="imageUrl"
+        placeholder="Enter image URL"
+      />
+      <div *ngIf="imagePreview" class="image-preview">
+        <img [src]="imagePreview" alt="Image Preview" />
+      </div>
+    </div>
+    <button type="submit" [disabled]="postForm.invalid">Create Post</button>
   </form>
 </div>
