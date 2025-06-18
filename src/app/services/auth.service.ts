@@ -10,7 +10,7 @@ export class AuthService {
   private tokenSubject = new BehaviorSubject<string | null>(null);
 
   constructor() {
-    // Simulate loading token from localStorage (for demo)
+    // Simulate loading token from localStorage
     const savedToken = localStorage.getItem('authToken');
     if (savedToken) {
       this.tokenSubject.next(savedToken);
@@ -22,7 +22,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<AuthResponse> {
-    // Simulate backend authentication
+    // Simulated Login authentication
     if (username === 'testuser' && password === 'password123') {
       const token = 'fake-jwt-token-123';
       const user: User = { username, password };
