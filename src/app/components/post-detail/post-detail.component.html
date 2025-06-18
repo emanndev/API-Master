@@ -1,16 +1,74 @@
-<div class="post-detail" *ngIf="post">
+<div class="post-detail">
+  <button class="back-btn" (click)="goBack()" title="Go Back">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+
   <h2>{{ post.title }}</h2>
   <p>{{ post.body }}</p>
+
   <h3>Comments</h3>
   <ul>
-    <li *ngFor="let comment of comments">{{ comment.body }}</li>
+    <li *ngFor="let comment of comments">
+      {{ comment.body }}
+    </li>
   </ul>
-  <div class="comment-form">
-    <input [(ngModel)]="newComment.name" placeholder="Your Name" />
-    <textarea
-      [(ngModel)]="newComment.body"
-      placeholder="Your Comment"
-    ></textarea>
-    <button (click)="addComment()">Add Comment</button>
+
+  <div class="button-group">
+    <button class="edit-btn" (click)="openEditModal()">Edit Post</button>
+    <button class="delete-btn" (click)="deletePost()">Delete Post</button>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal" *ngIf="showEditModal" (click)="showEditModal = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Edit Post</h3>
+      <div class="form-group">
+        <label for="edit-title">Title:</label>
+        <input
+          id="edit-title"
+          [(ngModel)]="editedPost.title"
+          placeholder="Enter title"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="edit-body">Body:</label>
+        <textarea
+          id="edit-body"
+          [(ngModel)]="editedPost.body"
+          placeholder="Enter content"
+          required
+        ></textarea>
+      </div>
+      <div
+        class="form-group"
+        *ngFor="let comment of editedComments; let i = index"
+      >
+        <label [for]="'edit-comment-' + i">Comment {{ i + 1 }}:</label>
+        <textarea
+          [id]="'edit-comment-' + i"
+          [(ngModel)]="comment.body"
+          placeholder="Edit comment"
+          required
+        ></textarea>
+      </div>
+      <div class="modal-buttons">
+        <button class="save-btn" (click)="saveEdit()">Save</button>
+        <button class="close-btn" (click)="showEditModal = false">
+          Cancel
+        </button>
+      </div>
+    </div>
   </div>
 </div>

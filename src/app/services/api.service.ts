@@ -109,17 +109,28 @@ export class ApiService {
   }
 
   getPost(id: number): Observable<Posts> {
+    const key = `/posts/${id}`;
     const storedPosts = JSON.parse(
       localStorage.getItem(this.storageKey) || '[]'
     );
     const post = storedPosts.find((p: Posts) => p.id === id);
+
+    if (this.isCacheValid(key)) {
+      console.log('Cache hit for post');
+      return of(this.getFromCache(key));
+    }
+
     if (!post) {
       return throwError(() => new Error('Post not found'));
     }
-    return of({
+
+    console.log('Cache miss for post, using LocalStorage');
+    const cachedPost = {
       ...post,
       imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
-    } as Posts).pipe(catchError(this.errorHandling.handleError));
+    } as Posts;
+    this.setInCache(key, cachedPost);
+    return of(cachedPost).pipe(catchError(this.errorHandling.handleError));
   }
 
   createPost(post: Partial<Posts>): Observable<Posts> {
@@ -138,6 +149,7 @@ export class ApiService {
     } as Posts;
     storedPosts.push(newPost);
     localStorage.setItem(this.storageKey, JSON.stringify(storedPosts));
+    this.clearCache();
     return of(newPost);
   }
 
@@ -153,6 +165,7 @@ export class ApiService {
         imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
       } as Posts;
       localStorage.setItem(this.storageKey, JSON.stringify(storedPosts));
+      this.clearCache();
       return of(storedPosts[index]);
     }
     return throwError(() => new Error('Post not found'));
@@ -164,16 +177,26 @@ export class ApiService {
     );
     const newPosts = storedPosts.filter((p: Posts) => p.id !== id);
     localStorage.setItem(this.storageKey, JSON.stringify(newPosts));
+    this.clearCache();
     return of({ success: true });
   }
 
   getComments(postId: number): Observable<Comments[]> {
+    const key = `/comments?postId=${postId}`;
+    if (this.isCacheValid(key)) {
+      console.log('Cache hit for comments');
+      return of(this.getFromCache(key));
+    }
+    console.log('Cache miss for comments, fetching from API');
     return this.errorHandling
       .retryRequest(
         this.http.get<Comments[]>(`${this.baseUrl}/comments?postId=${postId}`),
         2
       )
-      .pipe(catchError(this.errorHandling.handleError));
+      .pipe(
+        tap((data) => this.setInCache(key, data)),
+        catchError(this.errorHandling.handleError)
+      );
   }
 
   createComments(comment: Partial<Comments>): Observable<Comments> {

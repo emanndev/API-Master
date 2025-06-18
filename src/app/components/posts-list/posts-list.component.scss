@@ -5,6 +5,7 @@
   background: linear-gradient(135deg, #f5f7fa 0%, #e0e7f0 100%);
   border-radius: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  position: relative;
 
   h2 {
     color: #1a2a44;
@@ -150,6 +151,47 @@
     }
   }
 
+  .clear-cache-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #e74c3c;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, background 0.3s ease;
+
+    &:hover {
+      background: #c0392b;
+      transform: scale(1.1);
+    }
+
+    svg {
+      color: #fff;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .cache-message {
+    position: fixed;
+    bottom: 80px;
+    left: 20px;
+    background: #2ecc71;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-size: 1em;
+    z-index: 1000;
+  }
+
   @media (max-width: 768px) {
     padding: 15px;
     border-radius: 0;
@@ -169,6 +211,25 @@
 
     .post-item {
       padding: 15px;
+    }
+
+    .clear-cache-btn {
+      bottom: 10px;
+      left: 10px;
+      width: 40px;
+      height: 40px;
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .cache-message {
+      bottom: 60px;
+      left: 10px;
+      padding: 8px 15px;
+      font-size: 0.9em;
     }
   }
 

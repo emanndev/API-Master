@@ -5,6 +5,13 @@ import { Posts } from '../../model/posts.model';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PaginationComponent } from '../pagination/pagination.component';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-posts-list',
@@ -12,6 +19,14 @@ import { PaginationComponent } from '../pagination/pagination.component';
   imports: [CommonModule, RouterModule, FormsModule, PaginationComponent],
   templateUrl: './posts-list.component.html',
   styleUrls: ['./posts-list.component.scss'],
+  animations: [
+    trigger('fadeAnimation', [
+      state('hidden', style({ opacity: 0, transform: 'translateY(20px)' })),
+      state('visible', style({ opacity: 1, transform: 'translateY(0)' })),
+      transition('hidden => visible', [animate('0.5s ease-out')]),
+      transition('visible => hidden', [animate('0.3s ease-in')]),
+    ]),
+  ],
 })
 export class PostsListComponent implements OnInit {
   posts: Posts[] = [];
@@ -22,6 +37,7 @@ export class PostsListComponent implements OnInit {
   filterCategory: string = '';
   searchTerm: string = '';
   sortOrder: string = 'newest';
+  showMessage = false;
 
   constructor(private apiService: ApiService) {}
 
@@ -32,7 +48,7 @@ export class PostsListComponent implements OnInit {
   loadPosts() {
     this.apiService.getPosts().subscribe({
       next: (posts) => {
-        console.log('Loaded posts:', posts); // Debug log
+        console.log('Loaded posts:', posts);
         this.posts = posts.map((post) => ({
           ...post,
           category: this.getRandomCategory(),
@@ -94,6 +110,12 @@ export class PostsListComponent implements OnInit {
       this.currentPage = page;
       this.applyFilters();
     }
+  }
+
+  clearCache() {
+    this.apiService.clearCache();
+    this.showMessage = true;
+    setTimeout(() => (this.showMessage = false), 3000);
   }
 
   private getRandomCategory(): string {

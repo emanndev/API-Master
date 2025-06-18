@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Posts, Comments } from '../../model/posts.model';
 import { FormsModule } from '@angular/forms';
@@ -15,15 +15,15 @@ import { FormsModule } from '@angular/forms';
 export class PostDetailComponent implements OnInit {
   post!: Posts;
   comments: Comments[] = [];
-  newComment = {
-    postId: 0,
-    id: 0,
-    name: '',
-    email: '',
-    body: '',
-  };
+  showEditModal = false;
+  editedPost: Partial<Posts> = {};
+  editedComments: Partial<Comments>[] = [];
 
-  constructor(private apiService: ApiService, private route: ActivatedRoute) {}
+  constructor(
+    private apiService: ApiService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id')!;
@@ -32,32 +32,47 @@ export class PostDetailComponent implements OnInit {
       error: (err) => console.error('Failed to load post:', err),
     });
     this.apiService.getComments(id).subscribe({
-      next: (data) => (this.comments = data),
+      next: (data) => {
+        this.comments = data;
+        this.editedComments = data.map((comment) => ({ ...comment }));
+      },
       error: (err) => console.error('Failed to load comments:', err),
     });
-    this.newComment.postId = id;
   }
 
-  addComment() {
-    if (this.newComment.name && this.newComment.body) {
-      this.apiService
-        .createComments({
-          ...this.newComment,
-          email: `${this.newComment.name}@example.com`,
-        })
-        .subscribe({
-          next: (comment) => {
-            this.comments.push(comment);
-            this.newComment = {
-              postId: this.post.id,
-              id: 0,
-              name: '',
-              email: '',
-              body: '',
-            };
-          },
-          error: (err) => console.error('Failed to add comment:', err),
-        });
+  openEditModal() {
+    this.editedPost = { ...this.post };
+    this.editedComments = this.comments.map((comment) => ({ ...comment }));
+    this.showEditModal = true;
+  }
+
+  saveEdit() {
+    if (this.editedPost.title && this.editedPost.body) {
+      this.apiService.updatePosts(this.editedPost).subscribe({
+        next: (updatedPost) => {
+          this.post = updatedPost;
+          this.comments = this.editedComments as Comments[]; // Update comments locally
+          this.showEditModal = false;
+          window.alert('Post and comments updated successfully!');
+        },
+        error: (err) => console.error('Failed to update post:', err),
+      });
     }
+  }
+
+  deletePost() {
+    if (confirm('Are you sure you want to delete this post?')) {
+      this.apiService.deletePost(this.post.id).subscribe({
+        next: () => {
+          window.alert('Post deleted successfully!');
+          this.router.navigate(['/']); // Go back to posts list
+        },
+        error: (err) => console.error('Failed to delete post:', err),
+      });
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['..'], { relativeTo: this.route });
   }
 }
