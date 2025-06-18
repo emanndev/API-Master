@@ -21,6 +21,14 @@
     line-height: 1.6;
   }
 
+  .post-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    object-fit: cover;
+  }
+
   h3 {
     color: #1a2a44;
     margin-top: 25px;
@@ -180,6 +188,27 @@
           height: 100px;
           resize: vertical;
         }
+
+        .error {
+          color: #e74c3c;
+          font-size: 0.9em;
+          margin-top: 5px;
+
+          span {
+            display: block;
+          }
+        }
+
+        .image-preview {
+          margin-top: 10px;
+
+          img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 5px;
+            object-fit: cover;
+          }
+        }
       }
 
       .modal-buttons {
@@ -187,31 +216,34 @@
         gap: 10px;
         justify-content: flex-end;
 
-        .save-btn {
-          background: #2ecc71;
-          color: #fff;
+        button {
           padding: 10px 20px;
           border: none;
           border-radius: 5px;
           cursor: pointer;
           transition: background 0.3s ease;
 
-          &:hover {
-            background: #27ae60;
+          &.save-btn {
+            background: #2ecc71;
+            color: #fff;
+
+            &:hover:not(:disabled) {
+              background: #27ae60;
+            }
+
+            &:disabled {
+              background: #d3d3d3;
+              cursor: not-allowed;
+            }
           }
-        }
 
-        .close-btn {
-          background: #e74c3c;
-          color: #fff;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background 0.3s ease;
+          &.close-btn {
+            background: #e74c3c;
+            color: #fff;
 
-          &:hover {
-            background: #c0392b;
+            &:hover {
+              background: #c0392b;
+            }
           }
         }
       }
@@ -226,6 +258,10 @@
       font-size: 1.5em;
     }
 
+    .post-image {
+      max-height: 200px;
+    }
+
     .back-btn {
       top: 10px;
       left: 10px;
@@ -236,11 +272,16 @@
       }
     }
 
-    .button-group .edit-btn,
-    .button-group .delete-btn,
-    .button-group .login-button {
-      padding: 8px 15px;
-      font-size: 0.9em;
+    .button-group {
+      flex-direction: column;
+      gap: 8px;
+
+      .edit-btn,
+      .delete-btn,
+      .login-button {
+        padding: 8px 15px;
+        font-size: 0.9em;
+      }
     }
 
     .modal .modal-content {

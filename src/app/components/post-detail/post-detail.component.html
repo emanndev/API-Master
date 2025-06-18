@@ -16,6 +16,12 @@
 
   <h2>{{ post.title }}</h2>
   <p>{{ post.body }}</p>
+  <img
+    *ngIf="post.imageUrl"
+    [src]="post.imageUrl"
+    alt="{{ post.title }}"
+    class="post-image"
+  />
 
   <h3>Comments</h3>
   <ul>
@@ -52,42 +58,103 @@
   <div class="modal" *ngIf="showEditModal" (click)="showEditModal = false">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <h3>Edit Post and Comments</h3>
-      <div class="form-group">
-        <label for="edit-title">Title:</label>
-        <input
-          id="edit-title"
-          [(ngModel)]="editedPost.title"
-          placeholder="Enter title"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="edit-body">Body:</label>
-        <textarea
-          id="edit-body"
-          [(ngModel)]="editedPost.body"
-          placeholder="Enter content"
-          required
-        ></textarea>
-      </div>
-      <div
-        class="form-group"
-        *ngFor="let comment of editedComments; let i = index"
-      >
-        <label [for]="'edit-comment-' + i">Comment {{ i + 1 }}:</label>
-        <textarea
-          [id]="'edit-comment-' + i"
-          [(ngModel)]="comment.body"
-          placeholder="Edit comment"
-          required
-        ></textarea>
-      </div>
-      <div class="modal-buttons">
-        <button class="save-btn" (click)="saveEdit()">Save</button>
-        <button class="close-btn" (click)="showEditModal = false">
-          Cancel
-        </button>
-      </div>
+      <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
+        <div class="form-group">
+          <label for="edit-title">Title</label>
+          <input
+            id="edit-title"
+            formControlName="title"
+            placeholder="Enter title"
+          />
+          <div
+            *ngIf="
+              editForm.get('title')?.invalid && editForm.get('title')?.touched
+            "
+            class="error"
+          >
+            <span *ngIf="editForm.get('title')?.errors?.['required']"
+              >Title is required.</span
+            >
+            <span *ngIf="editForm.get('title')?.errors?.['minlength']"
+              >Title must be at least 5 characters.</span
+            >
+            <span
+              *ngIf="editForm.get('title')?.errors?.['restrictedContent']"
+              >{{ editForm.get('title')?.errors?.['restrictedContent'] }}</span
+            >
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-body">Body</label>
+          <textarea
+            id="edit-body"
+            formControlName="body"
+            placeholder="Enter content"
+          ></textarea>
+          <div
+            *ngIf="
+              editForm.get('body')?.invalid && editForm.get('body')?.touched
+            "
+            class="error"
+          >
+            <span *ngIf="editForm.get('body')?.errors?.['required']"
+              >Body is required.</span
+            >
+            <span *ngIf="editForm.get('body')?.errors?.['minlength']"
+              >Body must be at least 20 characters.</span
+            >
+            <span
+              *ngIf="editForm.get('body')?.errors?.['restrictedContent']"
+              >{{ editForm.get('body')?.errors?.['restrictedContent'] }}</span
+            >
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-imageUrl">Image URL (optional)</label>
+          <input
+            id="edit-imageUrl"
+            formControlName="imageUrl"
+            placeholder="Enter image URL"
+          />
+          <div *ngIf="imagePreview" class="image-preview">
+            <img [src]="imagePreview" alt="Image Preview" />
+          </div>
+        </div>
+        <div
+          class="form-group"
+          *ngFor="let comment of commentsFormArray.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <label [for]="'edit-comment-' + i">Comment {{ i + 1 }}</label>
+          <textarea
+            [id]="'edit-comment-' + i"
+            formControlName="body"
+            placeholder="Edit comment"
+          ></textarea>
+          <div
+            *ngIf="comment.get('body')?.invalid && comment.get('body')?.touched"
+            class="error"
+          >
+            <span *ngIf="comment.get('body')?.errors?.['required']"
+              >Comment is required.</span
+            >
+            <span
+              *ngIf="comment.get('body')?.errors?.['restrictedContent']"
+              >{{ comment.get('body')?.errors?.['restrictedContent'] }}</span
+            >
+          </div>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" [disabled]="editForm.invalid">Save</button>
+          <button
+            type="button"
+            class="close-btn"
+            (click)="showEditModal = false"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
