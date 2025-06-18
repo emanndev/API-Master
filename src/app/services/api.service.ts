@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Posts, Comments } from '../model/posts.model';
 import { ErrorHandlingService } from './error-handling.service';
@@ -12,6 +12,9 @@ import { ErrorHandlingService } from './error-handling.service';
 export class ApiService {
   private baseUrl = environment.apiUrl;
   private storageKey = 'blogPosts';
+  private cache = new Map<string, { data: any; timestamp: number }>();
+  private cacheTTL = 300000;
+  private isInitialized = false;
 
   constructor(
     private http: HttpClient,
@@ -20,16 +23,44 @@ export class ApiService {
     this.initializeLocalStorage();
   }
 
+  //Cache helper functions
+  private isCacheValid(key: string): boolean {
+    const cached = this.cache.get(key);
+    if (!cached) return false;
+    const now = Date.now();
+    return now - cached.timestamp < this.cacheTTL;
+  }
+
+  private getFromCache(key: string): any {
+    return this.cache.get(key)?.data;
+  }
+
+  private setInCache(key: string, data: any): void {
+    this.cache.set(key, { data, timestamp: Date.now() });
+  }
+
+  clearCache(): void {
+    this.cache.clear();
+    console.log('Cache cleared');
+  }
+
   private initializeLocalStorage() {
-    if (!localStorage.getItem(this.storageKey)) {
-      this.loadInitialData();
+    if (!this.isInitialized && !localStorage.getItem(this.storageKey)) {
+      this.loadInitialData().subscribe({
+        next: () => (this.isInitialized = true),
+        error: (err) => console.error('Initial data load failed:', err),
+      });
     }
   }
 
-  private loadInitialData() {
-    this.getPosts().subscribe((posts) => {
-      localStorage.setItem(this.storageKey, JSON.stringify(posts));
-    });
+  private loadInitialData(): Observable<Posts[]> {
+    return this.http.get<Posts[]>(`${this.baseUrl}/posts`).pipe(
+      tap((posts) => {
+        localStorage.setItem(this.storageKey, JSON.stringify(posts));
+        this.setInCache('/posts', posts); //cache initial load
+      }),
+      catchError(this.errorHandling.handleError)
+    );
   }
 
   getPosts(limit: number = 20, page: number = 1): Observable<Posts[]> {
@@ -41,6 +72,19 @@ export class ApiService {
     const storedPosts = JSON.parse(
       localStorage.getItem(this.storageKey) || '[]'
     );
+    if (!this.isInitialized && storedPosts.length === 0) {
+      return this.loadInitialData().pipe(
+        map((posts) =>
+          posts.map(
+            (post) =>
+              ({
+                ...post,
+                imageUrl: `https://picsum.photos/400/200?random=${post.id}`,
+              } as Posts)
+          )
+        )
+      );
+    }
     return this.errorHandling.retryRequest(of(storedPosts), 0).pipe(
       map((data: Posts[]) =>
         data.map(

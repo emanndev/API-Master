@@ -58,6 +58,22 @@
         outline: none;
       }
     }
+
+    .create-button {
+      padding: 12px 20px;
+      background: #e74c3c;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 500;
+      transition: background 0.3s ease, transform 0.3s ease;
+
+      &:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+      }
+    }
   }
 
   .posts-container {

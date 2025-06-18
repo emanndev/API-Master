@@ -7,12 +7,12 @@ import { catchError, retry } from 'rxjs/operators';
 })
 export class ErrorHandlingService {
   handleError(error: any): Observable<never> {
-    let errorMessage = 'An unknown error occurred';
+    let errorMessage = 'Error fetching data ';
     if (error.error instanceof ErrorEvent) {
       errorMessage = `Error: ${error.error.message}`;
     } else {
       errorMessage = `Error Code: ${error.status}\nMessage: ${
-        error.message || 'Server error'
+        error.message || 'Server error, could not get data'
       }`;
     }
     console.error(errorMessage);

@@ -18,7 +18,7 @@ export class PostsListComponent implements OnInit {
   filteredPosts: Posts[] = [];
   currentPage: number = 1;
   totalPages: number = 1;
-  pageSize: number = 5;
+  pageSize: number = 6;
   filterCategory: string = '';
   searchTerm: string = '';
   sortOrder: string = 'newest';
@@ -32,6 +32,7 @@ export class PostsListComponent implements OnInit {
   loadPosts() {
     this.apiService.getPosts().subscribe({
       next: (posts) => {
+        console.log('Loaded posts:', posts); // Debug log
         this.posts = posts.map((post) => ({
           ...post,
           category: this.getRandomCategory(),
