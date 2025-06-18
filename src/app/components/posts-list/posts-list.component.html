@@ -16,7 +16,12 @@
       <option value="newest">Newest</option>
       <option value="oldest">Oldest</option>
     </select>
-    <a routerLink="/create-post" class="create-button">Create New Post</a>
+    <a
+      routerLink="/create-post"
+      class="create-button"
+      *ngIf="authService.isAuthenticated()"
+      >Create New Post</a
+    >
   </div>
   <div class="posts-container">
     <div
@@ -40,7 +45,6 @@
     (pageChange)="onPageChange($event)"
     class="fade-in"
   ></app-pagination>
-
   <button class="clear-cache-btn" (click)="clearCache()" title="Clear Cache">
     <svg
       width="24"

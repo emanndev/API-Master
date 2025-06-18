@@ -5,6 +5,7 @@ import { Posts } from '../../model/posts.model';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PaginationComponent } from '../pagination/pagination.component';
+import { AuthService } from '../../services/auth.service';
 import {
   trigger,
   state,
@@ -33,13 +34,16 @@ export class PostsListComponent implements OnInit {
   filteredPosts: Posts[] = [];
   currentPage: number = 1;
   totalPages: number = 1;
-  pageSize: number = 6;
+  pageSize: number = 5;
   filterCategory: string = '';
   searchTerm: string = '';
   sortOrder: string = 'newest';
   showMessage = false;
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    public authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadPosts();
