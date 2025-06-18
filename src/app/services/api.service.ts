@@ -69,10 +69,17 @@ export class ApiService {
         () => new Error('Limit and page must be positive numbers')
       );
     }
+    const key = `/posts?limit=${limit}&page=${page}`;
     const storedPosts = JSON.parse(
       localStorage.getItem(this.storageKey) || '[]'
     );
+
+    if (this.isCacheValid(key)) {
+      console.log('Cache hit for posts');
+      return of(this.getFromCache(key));
+    }
     if (!this.isInitialized && storedPosts.length === 0) {
+      console.log('Initial load required, fetching from API');
       return this.loadInitialData().pipe(
         map((posts) =>
           posts.map(
@@ -85,6 +92,7 @@ export class ApiService {
         )
       );
     }
+    console.log('Cache miss for posts, using LocalStorage or API');
     return this.errorHandling.retryRequest(of(storedPosts), 0).pipe(
       map((data: Posts[]) =>
         data.map(
@@ -95,6 +103,7 @@ export class ApiService {
             } as Posts)
         )
       ),
+      tap((data) => this.setInCache(key, data)),
       catchError(this.errorHandling.handleError)
     );
   }
