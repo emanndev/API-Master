@@ -1,59 +1,93 @@
-# AngularAPIMasterApp
+# Angular API Master App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.14.
+A simple Angular application for managing posts using the JSONPlaceholder API. Features include user authentication, post creation, editing, and listing, deployed on Netlify.
 
-## Development server
+## Features
 
-To start a local development server, run:
+User login/logout with token-based authentication
+Fetch, create, edit, and delete posts via JSONPlaceholder API
+Responsive UI with SCSS styling
+Client-side routing for single-page application
+Deployed on Netlify with HTTPS
 
-```bash
-ng serve
-```
+## Project Structure
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+├── src/
+│ ├── app/
+│ │ ├── components/
+│ │ │ ├── create-post/
+│ │ │ ├── pagination/
+│ │ │ ├── edit-post/
+│ │ │ ├── login/
+│ │ │ ├── post-detail/
+│ │ │ ├── posts-list/
+│ │ ├── services/
+│ │ │ ├── api.service.ts
+│ │ │ ├── auth.service.ts
+│ │ ├── auth.interceptor.ts
+│ │ ├── app.component.
+│ │ ├── app.config.ts
+│ │ ├── app.routes.ts
+│ ├── environments/
+│ ├── styles/
+│ │ ├── \_mixins.scss
+│ ├── index.html
+│ ├── main.ts
+├── angular.json
+├── package.json
+├── tsconfig.json
 
-## Code scaffolding
+## Getting Started
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Prerequisites
 
-```bash
-ng generate component component-name
-```
+Node.js (v18.x recommended)
+Angular CLI (npm install -g @angular/cli)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Installation
 
-```bash
-ng generate --help
-```
+Clone the repository:git clone <your-repo-url>
+cd angular-api-master-app
 
-## Building
+Install dependencies:npm install
 
-To build the project run:
+Running Locally
 
-```bash
-ng build
-```
+Start the development server:ng serve --ssl
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Open https://localhost:4200 in your browser.
 
-## Running unit tests
+Building for Production
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Build the app:ng build --configuration production
 
-```bash
+Output is in dist/angular-api-master-app/browser.
+
+Deployment
+Deployed on Netlify at https://angular-api-master-app.netlify.app/.
+
+Push changes to your Git repository.
+In Netlify:
+Build command: ng build --configuration production
+Publish directory: dist/angular-api-master-app/browser
+Environment variable: API_URL=https://jsonplaceholder.typicode.com
+
+Login Password
+username: testuser
+password: password123
+
+Testing
+Run unit tests with:
 ng test
-```
 
-## Running end-to-end tests
+## Contributing
 
-For end-to-end (e2e) testing, run:
+Fork the repository.
+Create a feature branch (git checkout -b feature/new-feature).
+Commit changes (git commit -m "Add new feature").
+Push to the branch (git push origin feature/new-feature).
+Open a pull request.
 
-```bash
-ng e2e
-```
+## License
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+MIT License
