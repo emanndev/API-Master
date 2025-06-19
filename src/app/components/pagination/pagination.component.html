@@ -1,14 +1,42 @@
 <div class="pagination">
+  <div class="loader" *ngIf="isLoading">
+    <div class="spinner"></div>
+  </div>
+
   <button
+    [disabled]="currentPage === 1 || isLoading"
     (click)="onPageChange(currentPage - 1)"
-    [disabled]="currentPage === 1"
+    aria-label="Go to previous page"
   >
     Previous
   </button>
-  <span>Page {{ currentPage }} of {{ totalPages }}</span>
+
   <button
+    *ngFor="let page of getPageRange()"
+    [class.active]="page === currentPage"
+    [disabled]="isLoading"
+    (click)="onPageChange(page)"
+    [attr.aria-label]="'Go to page ' + page"
+    [attr.aria-current]="page === currentPage ? 'page' : null"
+  >
+    {{ page }}
+  </button>
+
+  <span *ngIf="showEllipsis">...</span>
+
+  <button
+    *ngIf="showEllipsis"
+    (click)="onPageChange(totalPages)"
+    [disabled]="isLoading"
+    aria-label="Go to last page"
+  >
+    {{ totalPages }}
+  </button>
+
+  <button
+    [disabled]="currentPage === totalPages || isLoading"
     (click)="onPageChange(currentPage + 1)"
-    [disabled]="currentPage === totalPages"
+    aria-label="Go to next page"
   >
     Next
   </button>
