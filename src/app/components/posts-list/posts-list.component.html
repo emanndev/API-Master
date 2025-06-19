@@ -1,0 +1,106 @@
+<section class="posts-grid">
+  <h2 class="fade-in">Blog Posts</h2>
+
+  <div class="controls slide-in">
+    <select
+      class="filter-select"
+      [(ngModel)]="filterCategory"
+      (ngModelChange)="onFilter($event)"
+    >
+      <option value="">All Categories</option>
+      <option value="Tech">Tech</option>
+      <option value="Lifestyle">Lifestyle</option>
+    </select>
+
+    <select
+      class="sort-select"
+      [(ngModel)]="sortOrder"
+      (ngModelChange)="onSort($event)"
+    >
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+    </select>
+
+    <input
+      type="text"
+      class="search-bar"
+      placeholder="Search posts..."
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearch($event)"
+    />
+
+    <a
+      *ngIf="authService.isAuthenticated()"
+      routerLink="/create-post"
+      class="create-button"
+      >Create New Post</a
+    >
+
+    <button
+      *ngIf="!authService.isAuthenticated()"
+      class="login-button"
+      (click)="promptLogin()"
+    >
+      Login
+    </button>
+
+    <button
+      *ngIf="authService.isAuthenticated()"
+      class="logout-button"
+      (click)="logout()"
+    >
+      Logout
+    </button>
+  </div>
+
+  <div class="posts-container">
+    <div
+      class="post-item slide-up"
+      *ngFor="let post of filteredPosts; let i = index"
+      [@fadeAnimation]="i % 2 === 0 ? 'visible' : 'hidden'"
+    >
+      <img
+        class="post-image"
+        [src]="post.imageUrl"
+        alt="Post image"
+        (error)="handleImageError($event, post.id)"
+      />
+      <h3>{{ post.title }}</h3>
+      <p>
+        {{ post.body | slice : 0 : 150
+        }}{{ post.body.length > 150 ? "..." : "" }}
+      </p>
+      <a [routerLink]="['/post', post.id]" class="read-more">Read More</a>
+    </div>
+  </div>
+
+  <app-pagination
+    *ngIf="totalPages > 1"
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    [isLoading]="isLoading"
+    (pageChange)="onPageChange($event)"
+    class="pagination fade-in"
+  ></app-pagination>
+
+  <button class="clear-cache-btn" (click)="clearCache()" title="Clear cache">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+  </button>
+
+  <div class="cache-message slide-up" *ngIf="showMessage">
+    Cache cleared successfully!
+  </div>
+</section>

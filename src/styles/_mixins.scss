@@ -1,0 +1,241 @@
+@use "variables" as *;
+
+@mixin button-primary($bg-start, $bg-end, $color: $white) {
+  background: linear-gradient(135deg, $bg-start 0%, $bg-end 100%);
+  color: $color;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: $shadow-md-alt;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg-alt;
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: $gray-300;
+    color: $gray-500;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    &::before {
+      display: none;
+    }
+  }
+}
+
+// Secondary button
+@mixin button-secondary(
+  $bg-start: $white,
+  $bg-end: $gray-50,
+  $border: $border-color
+) {
+  background: linear-gradient(135deg, $bg-start 0%, $bg-end 100%);
+  color: $text-dark;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid $border;
+  border-radius: $border-radius-sm;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: $shadow-sm-alt;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      $danger-dark-red 0%,
+      darken($danger-dark-red, 10%) 100%
+    );
+    color: $white;
+    border-color: $danger-dark-red;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md-alt;
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Shadow styles
+@mixin shadow($type: md) {
+  @if $type == sm {
+    box-shadow: $shadow-sm-alt;
+  } @else if $type == md {
+    box-shadow: $shadow-md-alt;
+  } @else if $type == lg {
+    box-shadow: $shadow-lg-alt;
+  } @else if $type == xl {
+    box-shadow: $shadow-xl;
+  } @else if $type == violet {
+    box-shadow: 0 10px 30px $shadow-violet, 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Gradient background
+@mixin gradient-bg($start, $end) {
+  background: linear-gradient(135deg, $start 0%, $end 100%);
+}
+
+// Input styles
+@mixin input-base {
+  padding: 1rem 1.25rem;
+  border: 2px solid $gray-200;
+  border-radius: $border-radius-sm;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: $white;
+  color: $gray-800;
+  font-family: inherit;
+
+  &::placeholder {
+    color: $gray-400;
+    opacity: 0.7;
+  }
+
+  &:focus {
+    border-color: $primary-indigo;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:hover:not(:focus) {
+    border-color: $gray-300;
+  }
+}
+
+// Animation keyframes
+@mixin animation($name) {
+  @if $name == fadeInUp {
+    animation: fadeInUp 0.5s ease-out;
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  } @else if $name == slideInLeft {
+    animation: slideInLeft 0.6s ease-out;
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  } @else if $name == slideInUp {
+    animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  } @else if $name == shake {
+    animation: shake 0.3s ease-in-out;
+    @keyframes shake {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      25% {
+        transform: translateX(-4px);
+      }
+      75% {
+        transform: translateX(4px);
+      }
+    }
+  } @else if $name == spin {
+    animation: spin 1s linear infinite;
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  } @else if $name == float {
+    animation: float 6s ease-in-out infinite;
+    @keyframes float {
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      33% {
+        transform: translateY(-20px) rotate(120deg);
+      }
+      66% {
+        transform: translateY(10px) rotate(240deg);
+      }
+    }
+  }
+}
