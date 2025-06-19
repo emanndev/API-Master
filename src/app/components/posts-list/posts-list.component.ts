@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { AuthService } from '../../services/auth.service';
+import { SanitizerService } from '../../services/sanitizer.service';
 import {
   trigger,
   state,
@@ -43,7 +44,8 @@ export class PostsListComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     public authService: AuthService,
-    private router: Router
+    private router: Router,
+    private sanitizerService: SanitizerService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +59,9 @@ export class PostsListComponent implements OnInit {
         this.posts = posts.map((post) => ({
           ...post,
           category: this.getRandomCategory(),
+          imageUrl: this.sanitizerService.sanitizeUrl(
+            post.imageUrl || ''
+          ) as string,
         }));
         this.applyFilters();
       },
@@ -133,6 +138,12 @@ export class PostsListComponent implements OnInit {
     this.authService.logout();
     window.alert('Logged out successfully!');
     this.router.navigate(['/']);
+  }
+
+  handleImageError(event: Event, postId: number) {
+    console.error(`Failed to load image for post ${postId}: ${event}`);
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.src = 'https://via.placeholder.com/400/200';
   }
 
   private getRandomCategory(): string {

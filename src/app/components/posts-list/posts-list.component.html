@@ -1,69 +1,82 @@
 <div class="posts-grid">
-  <h2 class="fade-in">Blog Posts</h2>
-  <div class="controls slide-in">
-    <input
-      type="text"
-      class="search-bar"
-      placeholder="Search posts..."
-      (input)="onSearch($event)"
-    />
-    <select class="filter-select" (change)="onFilter($event)">
-      <option value="">All Categories</option>
-      <option value="Tech">Tech</option>
-      <option value="Lifestyle">Lifestyle</option>
-    </select>
-    <select class="sort-select" (change)="onSort($event)">
-      <option value="newest">Newest</option>
-      <option value="oldest">Oldest</option>
-    </select>
-    <a
-      routerLink="/create-post"
-      class="create-button"
-      [class.disabled]="!authService.isAuthenticated()"
-      (click)="!authService.isAuthenticated() && promptLogin()"
-      >Create New Post</a
-    >
-    <button
-      class="login-button"
-      *ngIf="!authService.isAuthenticated()"
-      routerLink="/login"
-    >
-      Login
-    </button>
-    <button
-      class="logout-button"
-      *ngIf="authService.isAuthenticated()"
-      (click)="logout()"
-    >
-      Logout
-    </button>
-  </div>
-  <div class="posts-container">
-    <div
-      *ngFor="let post of filteredPosts; let i = index"
-      class="post-item slide-up"
-      [style.animation-delay]="i * 0.1 + 's'"
-    >
-      <img
-        [src]="post.imageUrl || 'https://via.placeholder.com/300x200'"
-        alt="{{ post.title }}"
-        class="post-image"
+  <div class="posts-container-wrapper">
+    <h2 class="fade-in">Blog Posts</h2>
+
+    <div class="controls slide-in">
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="🔍 Search posts..."
+        (input)="onSearch($event)"
       />
-      <h3>{{ post.title }}</h3>
-      <p>
-        {{ post.body | slice : 0 : 100
-        }}{{ post.body.length > 100 ? "..." : "" }}
-      </p>
-      <a [routerLink]="['/post', post.id]" class="read-more">Read More</a>
+      <select class="filter-select" (change)="onFilter($event)">
+        <option value="">All Categories</option>
+        <option value="Tech">Tech</option>
+        <option value="Lifestyle">Lifestyle</option>
+      </select>
+      <select class="sort-select" (change)="onSort($event)">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+      </select>
+      <a
+        routerLink="/create-post"
+        class="create-button"
+        [class.disabled]="!authService.isAuthenticated()"
+        (click)="!authService.isAuthenticated() && promptLogin()"
+      >
+        Create New Post <i class="fa-solid fa-circle-plus"></i>
+      </a>
+      <button
+        class="login-button"
+        *ngIf="!authService.isAuthenticated()"
+        routerLink="/login"
+      >
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+      </button>
+      <button
+        class="logout-button"
+        *ngIf="authService.isAuthenticated()"
+        (click)="logout()"
+      >
+        Logout <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
     </div>
+
+    <div class="posts-container">
+      <div
+        *ngFor="let post of filteredPosts; let i = index"
+        class="post-item slide-up"
+        [style.animation-delay]="i * 0.1 + 's'"
+      >
+        <img
+          [src]="
+            post.imageUrl ||
+            'https://via.placeholder.com/400x250/667eea/ffffff?text=Blog+Post'
+          "
+          alt="{{ post.title }}"
+          class="post-image"
+          (error)="handleImageError($event, post.id)"
+        />
+        <div class="post-content">
+          <h3>{{ post.title }}</h3>
+          <p>
+            {{ post.body | slice : 0 : 150
+            }}{{ post.body.length > 150 ? "..." : "" }}
+          </p>
+          <a [routerLink]="['/post', post.id]" class="read-more">Read More</a>
+        </div>
+      </div>
+    </div>
+
+    <app-pagination
+      *ngIf="totalPages > 1"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (pageChange)="onPageChange($event)"
+      class="pagination fade-in"
+    ></app-pagination>
   </div>
-  <app-pagination
-    *ngIf="totalPages > 1"
-    [currentPage]="currentPage"
-    [totalPages]="totalPages"
-    (pageChange)="onPageChange($event)"
-    class="fade-in"
-  ></app-pagination>
+
   <button class="clear-cache-btn" (click)="clearCache()" title="Clear Cache">
     <svg
       width="24"
@@ -75,16 +88,16 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <circle cx="12" cy="12" r="10"></circle>
-      <line x1="15" y1="9" x2="9" y2="15"></line>
-      <line x1="9" y1="9" x2="15" y2="15"></line>
+      <path d="M3 6h18l-2 13H5L3 6z" />
+      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
     </svg>
   </button>
+
   <div
     class="cache-message"
     *ngIf="showMessage"
     [@fadeAnimation]="showMessage ? 'visible' : 'hidden'"
   >
-    Cache cleared successfully!
+    ✅ Cache cleared successfully!
   </div>
 </div>
