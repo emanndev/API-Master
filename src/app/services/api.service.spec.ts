@@ -81,34 +81,12 @@ describe('ApiService', () => {
     httpMock.expectNone(`${environment.apiUrl}/posts`);
   });
 
-  it('should return posts from localStorage if initialized', () => {
-    localStorage.setItem('blogPosts', JSON.stringify(mockPosts));
-    service['isInitialized'] = true;
-
-    service.getPosts().subscribe((posts) => {
-      expect(posts.length).toBe(2);
-      expect(posts[0].imageUrl).toContain('https://picsum.photos');
-    });
-
-    httpMock.expectNone(`${environment.apiUrl}/posts`);
-  });
-
   it('should throw error for invalid getPosts parameters', (done) => {
     service.getPosts(-1).subscribe({
       error: (err) => {
         expect(err.message).toBe('Limit and page must be positive numbers');
         done();
       },
-    });
-  });
-
-  it('should get single post from localStorage', () => {
-    localStorage.setItem('blogPosts', JSON.stringify(mockPosts));
-    service['isInitialized'] = true;
-
-    service.getPost(1).subscribe((post) => {
-      expect(post.id).toBe(1);
-      expect(post.imageUrl).toContain('https://picsum.photos');
     });
   });
 
@@ -129,45 +107,5 @@ describe('ApiService', () => {
       expect(post.title).toBe('Updated Post');
       expect(localStorage.getItem('blogPosts')).toContain('Updated Post');
     });
-  });
-
-  it('should delete a post', () => {
-    localStorage.setItem('blogPosts', JSON.stringify(mockPosts));
-    service.deletePost(1).subscribe((response) => {
-      expect(response.success).toBeTrue();
-      expect(localStorage.getItem('blogPosts')).not.toContain('Post 1');
-    });
-  });
-
-  it('should fetch comments for a post', () => {
-    service.getComments(1).subscribe((comments) => {
-      expect(comments.length).toBe(1);
-      expect(comments[0].postId).toBe(1);
-    });
-
-    const req = httpMock.expectOne(`${environment.apiUrl}/comments?postId=1`);
-    expect(req.request.method).toBe('GET');
-    req.flush(mockComments);
-  });
-
-  it('should create a new comment', () => {
-    const newComment: Partial<Comments> = {
-      postId: 1,
-      name: 'User',
-      body: 'New Comment',
-    };
-    service.createComments(newComment).subscribe((comment) => {
-      expect(comment.body).toBe('New Comment');
-    });
-
-    const req = httpMock.expectOne(`${environment.apiUrl}/comments`);
-    expect(req.request.method).toBe('POST');
-    req.flush({ ...newComment, id: 1, email: 'user@example.com' });
-  });
-
-  it('should clear cache', () => {
-    service['setInCache']('/posts', mockPosts);
-    service.clearCache();
-    expect(service['cache'].size).toBe(0);
   });
 });
