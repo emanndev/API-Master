@@ -1,51 +1,19 @@
-$primary-color: #6366f1; // Indigo-blue
-$primary-dark: #4f46e5;
-$primary-light: #8b5cf6;
-$secondary-color: #8b5cf6; // Purple-violet
-$accent-color: #06b6d4; // Cyan accent
-$success-color: #10b981;
-$danger-color: #ef4444;
-$warning-color: #f59e0b;
-
-// Neutral Colors
-$white: #ffffff;
-$gray-50: #f8fafc;
-$gray-100: #f1f5f9;
-$gray-200: #e2e8f0;
-$gray-300: #cbd5e1;
-$gray-400: #94a3b8;
-$gray-500: #64748b;
-$gray-600: #475569;
-$gray-700: #334155;
-$gray-800: #1e293b;
-$gray-900: #0f172a;
-
-// Shadows
-$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-  0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-  0 4px 6px -2px rgba(0, 0, 0, 0.05);
-$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-  0 10px 10px -5px rgba(0, 0, 0, 0.04);
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
 
 .create-post {
   max-width: 700px;
   margin: 2rem auto;
   background: $white;
   border-radius: 20px;
-  box-shadow: $shadow-xl;
+  @include shadow(xl);
   overflow: hidden;
   position: relative;
-  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  @include animation(slideInUp);
 
   // Header section with gradient background
   .create-post-header {
-    background: linear-gradient(
-      135deg,
-      $primary-color 0%,
-      $secondary-color 100%
-    );
+    @include gradient-bg($primary-indigo, $secondary-indigo);
     padding: 2rem;
     position: relative;
     color: $white;
@@ -143,30 +111,17 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
           content: "";
           width: 4px;
           height: 4px;
-          background: linear-gradient(135deg, $primary-color, $secondary-color);
+          @include gradient-bg($primary-indigo, $secondary-indigo);
           border-radius: 50%;
         }
       }
 
       input,
       textarea {
-        padding: 1rem 1.25rem;
-        border: 2px solid $gray-200;
-        border-radius: 12px;
-        font-size: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: $white;
-        color: $gray-800;
-        font-family: inherit;
-        position: relative;
-
-        &::placeholder {
-          color: $gray-400;
-          transition: opacity 0.3s ease;
-        }
+        @include input-base;
 
         &:focus {
-          border-color: $primary-color;
+          border-color: $primary-indigo;
           outline: none;
           box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
           transform: translateY(-1px);
@@ -176,15 +131,11 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
           }
         }
 
-        &:hover:not(:focus) {
-          border-color: $gray-300;
-        }
-
         // Floating label effect
         &:focus + .floating-label,
         &:not(:placeholder-shown) + .floating-label {
           transform: translateY(-1.5rem) scale(0.85);
-          color: $primary-color;
+          color: $primary-indigo;
         }
       }
 
@@ -206,12 +157,12 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
         border-radius: 8px;
         padding: 0.75rem;
         margin-top: 0.5rem;
-        animation: shake 0.3s ease-in-out;
+        @include animation(shake);
 
         span {
           display: flex;
           align-items: center;
-          color: $danger-color;
+          color: $danger-red;
           font-size: 0.875rem;
           font-weight: 500;
           margin-bottom: 0.25rem;
@@ -233,9 +184,9 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
         margin-top: 1rem;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: $shadow-md;
+        @include shadow(md);
         position: relative;
-        animation: fadeIn 0.3s ease-in-out;
+        @include animation(fadeInUp);
 
         &::before {
           content: "";
@@ -251,7 +202,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
             transparent 70%
           );
           pointer-events: none;
-          animation: shimmer 2s infinite;
+          @include animation(float);
         }
 
         img {
@@ -275,7 +226,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
         left: 0;
         width: 0;
         height: 2px;
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
+        @include gradient-bg($primary-indigo, $secondary-indigo);
         transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border-radius: 1px;
       }
@@ -287,23 +238,10 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
 
     // Submit button styling
     button[type="submit"] {
-      background: linear-gradient(
-        135deg,
-        $primary-color 0%,
-        $secondary-color 100%
-      );
-      color: $white;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 12px;
+      @include button-primary($primary-indigo, $secondary-indigo);
       font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
+      padding: 1rem 2rem;
       margin-top: 1rem;
-      box-shadow: $shadow-md;
-      overflow: hidden;
 
       // Shine effect
       &::before {
@@ -323,28 +261,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
       }
 
       &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: $shadow-lg;
-
         &::before {
           left: 100%;
-        }
-      }
-
-      &:active:not(:disabled) {
-        transform: translateY(0);
-        box-shadow: $shadow-md;
-      }
-
-      &:disabled {
-        background: $gray-300;
-        color: $gray-500;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-
-        &::before {
-          display: none;
         }
       }
 
@@ -408,56 +326,11 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
   }
 }
 
-// Animations
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-4px);
-  }
-  75% {
-    transform: translateX(4px);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
 // Form validation states
 .create-post .create-form .form-group {
   &.valid input,
   &.valid textarea {
-    border-color: $success-color;
+    border-color: $success-green;
     background: rgba(16, 185, 129, 0.02);
 
     &:focus {
@@ -467,7 +340,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
 
   &.invalid input,
   &.invalid textarea {
-    border-color: $danger-color;
+    border-color: $danger-red;
     background: rgba(239, 68, 68, 0.02);
 
     &:focus {
@@ -490,19 +363,10 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
       border: 2px solid transparent;
       border-top: 2px solid currentColor;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      @include animation(spin);
       right: 1rem;
       top: 50%;
       transform: translateY(-50%);
     }
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: translateY(-50%) rotate(0deg);
-  }
-  100% {
-    transform: translateY(-50%) rotate(360deg);
   }
 }

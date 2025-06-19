@@ -1,23 +1,13 @@
-$primary-color: #6c5ce7; // Blue-violet primary
-$primary-dark: #5a52d5; // Darker shade for hover
-$primary-light: #a29bfe; // Lighter shade for accents
-$secondary-color: #fd79a8; // Pink accent
-$success-color: #00b894; // Success green
-$error-color: #e84393; // Error pink
-$warning-color: #fdcb6e; // Warning yellow
-$text-primary: #2d3436; // Dark text
-$text-secondary: #636e72; // Light text
-$background-light: #f8f9fa; // Light background
-$border-color: #ddd6fe; // Light violet border
-$shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
 
 .edit-post {
   max-width: 700px;
   margin: 2rem auto;
   padding: 0;
-  background: linear-gradient(135deg, $background-light 0%, #ffffff 100%);
+  @include gradient-bg($bg-light, $white);
   border-radius: 20px;
-  box-shadow: 0 10px 30px $shadow-color, 0 4px 15px rgba(0, 0, 0, 0.1);
+  @include shadow(violet);
   overflow: hidden;
   position: relative;
 
@@ -28,14 +18,14 @@ $shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
     left: 0;
     right: 0;
     height: 120px;
-    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    @include gradient-bg($primary-violet, $primary-light-violet);
     border-radius: 20px 20px 0 0;
   }
 
   h2 {
     position: relative;
     z-index: 2;
-    color: #ffffff;
+    color: $white;
     text-align: center;
     margin: 0;
     padding: 40px 30px 30px;
@@ -72,30 +62,17 @@ $shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
           content: "";
           width: 3px;
           height: 3px;
-          background: $primary-color;
+          background: $primary-violet;
           border-radius: 50%;
         }
       }
 
       input,
       textarea {
-        padding: 15px 18px;
-        border: 2px solid $border-color;
-        border-radius: 12px;
-        font-size: 1em;
-        font-family: inherit;
-        background: #ffffff;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        color: $text-primary;
-        position: relative;
-
-        &::placeholder {
-          color: $text-secondary;
-          opacity: 0.7;
-        }
+        @include input-base;
 
         &:focus {
-          border-color: $primary-color;
+          border-color: $primary-violet;
           outline: none;
           box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1),
             0 4px 12px rgba(108, 92, 231, 0.15);
@@ -103,7 +80,7 @@ $shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
         }
 
         &:hover:not(:focus) {
-          border-color: $primary-light;
+          border-color: $primary-light-violet;
         }
       }
 
@@ -115,13 +92,13 @@ $shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
       }
 
       .error {
-        color: $error-color;
+        color: $error-pink;
         font-size: 0.9em;
         margin-top: 8px;
         padding: 8px 12px;
         background: rgba(232, 67, 147, 0.1);
         border-radius: 8px;
-        border-left: 3px solid $error-color;
+        border-left: 3px solid $error-pink;
 
         span {
           display: block;
@@ -141,16 +118,16 @@ $shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
       .image-preview {
         margin-top: 15px;
         padding: 15px;
-        background: $background-light;
+        background: $bg-light;
         border-radius: 12px;
-        border: 2px dashed $border-color;
+        border: 2px dashed $border-violet;
 
         img {
           width: 100%;
           max-height: 250px;
           border-radius: 10px;
           object-fit: cover;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          @include shadow(sm);
           transition: transform 0.3s ease;
 
           &:hover {
@@ -202,35 +179,14 @@ $shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
         }
 
         &:first-child {
-          background: linear-gradient(
-            135deg,
-            $primary-color 0%,
-            $primary-dark 100%
-          );
-          color: #ffffff;
-          box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3),
-            0 2px 8px rgba(0, 0, 0, 0.1);
-
-          &:hover:not(:disabled) {
-            background: linear-gradient(
-              135deg,
-              $primary-dark 0%,
-              $primary-color 100%
-            );
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4),
-              0 4px 12px rgba(0, 0, 0, 0.15);
-          }
-
-          &:active:not(:disabled) {
-            transform: translateY(0);
-          }
+          @include button-primary($primary-violet, $primary-dark-violet);
 
           &:disabled {
-            background: linear-gradient(135deg, #b2b2b2 0%, #999999 100%);
+            background: linear-gradient(135deg, $gray-300 0%, $gray-400 100%);
+            color: $gray-500;
             cursor: not-allowed;
             transform: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            @include shadow(sm);
 
             &::before {
               display: none;
@@ -239,19 +195,12 @@ $shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
         }
 
         &.cancel-btn {
-          background: linear-gradient(
-            135deg,
-            #ffffff 0%,
-            $background-light 100%
-          );
-          color: $text-primary;
-          border: 2px solid $border-color;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          @include button-secondary($white, $bg-light, $border-violet);
 
           &:hover {
-            background: linear-gradient(135deg, $error-color 0%, #d63384 100%);
-            color: #ffffff;
-            border-color: $error-color;
+            @include gradient-bg($error-pink, darken($error-pink, 10%));
+            color: $white;
+            border-color: $error-pink;
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(232, 67, 147, 0.3),
               0 2px 8px rgba(0, 0, 0, 0.1);
@@ -323,30 +272,21 @@ $shadow-color: rgba(108, 92, 231, 0.15); // Primary shadow
           #f0f0f0 75%
         );
         background-size: 200% 100%;
-        animation: loading 1.5s infinite;
+        @include animation(spin);
       }
     }
   }
 }
 
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
 .edit-post .edit-form {
   button:focus-visible {
-    outline: 2px solid $primary-color;
+    outline: 2px solid $primary-violet;
     outline-offset: 2px;
   }
 
   input:focus-visible,
   textarea:focus-visible {
-    outline: 2px solid $primary-color;
+    outline: 2px solid $primary-violet;
     outline-offset: 2px;
   }
 }
