@@ -108,7 +108,6 @@
     margin-bottom: 3rem;
   }
 
-  // Individual post items
   .post-item {
     background: $bg-primary;
     border-radius: $border-radius-lg;
@@ -228,10 +227,10 @@
       transform: scale(0.95);
     }
 
-    svg {
+    img {
       color: $white;
-      width: 20px;
-      height: 20px;
+      width: 35px;
+      height: 35px;
     }
   }
 
@@ -250,7 +249,7 @@
     z-index: 100;
   }
 
-  // Animation classes (lightweight)
+  // Animation
   .fade-in {
     @include animation(fadeInUp);
   }
@@ -265,7 +264,6 @@
   }
 }
 
-// Responsive design
 @media (max-width: 1024px) {
   .posts-grid {
     .posts-container {
@@ -362,12 +360,10 @@
   }
 }
 
-// Performance optimizations
 * {
   box-sizing: border-box;
 }
 
-// Reduce motion for users who prefer it
 @media (prefers-reduced-motion: reduce) {
   .posts-grid {
     .fade-in,

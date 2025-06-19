@@ -15,11 +15,10 @@
       </svg>
     </button>
 
-    <h2>Create New Post</h2>
+    <h2><i class="fa-solid fa-pen-to-square"></i> Create New Post</h2>
   </div>
 
   <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="create-form">
-    <!-- Title Field -->
     <div
       class="form-group"
       [class.valid]="
@@ -53,7 +52,6 @@
       </div>
     </div>
 
-    <!-- Body Field -->
     <div
       class="form-group"
       [class.valid]="
@@ -86,7 +84,6 @@
       </div>
     </div>
 
-    <!-- Image URL Field -->
     <div
       class="form-group"
       [class.valid]="
@@ -105,7 +102,6 @@
         autocomplete="off"
       />
 
-      <!-- Image Preview -->
       <div *ngIf="imagePreview" class="image-preview">
         <img
           [src]="imagePreview"
@@ -115,13 +111,14 @@
       </div>
     </div>
 
-    <!-- Submit Button -->
     <button
       type="submit"
       [disabled]="postForm.invalid"
       [class.loading]="isSubmitting"
     >
-      <span *ngIf="!isSubmitting">Create Post</span>
+      <span *ngIf="!isSubmitting"
+        ><i class="fa-solid fa-file-circle-plus"> </i> Create Post
+      </span>
       <span *ngIf="isSubmitting">Creating...</span>
     </button>
   </form>
