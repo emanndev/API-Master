@@ -1,88 +1,5 @@
-$primary-color: #667eea;
-$primary-hover: #5a67d8;
-$secondary-color: #764ba2;
-$success-color: #48bb78;
-$error-color: #f56565;
-$warning-color: #ed8936;
-
-$text-primary: #2d3748;
-$text-secondary: #718096;
-$text-light: #a0aec0;
-
-$bg-primary: #ffffff;
-$bg-secondary: #f7fafc;
-$bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
-$border-color: #e2e8f0;
-$border-focus: #667eea;
-
-$shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-  0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-  0 4px 6px -2px rgba(0, 0, 0, 0.05);
-$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-  0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
-$border-radius: 0.75rem;
-$border-radius-sm: 0.5rem;
-
-// Animations
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  33% {
-    transform: translateY(-20px) rotate(120deg);
-  }
-  66% {
-    transform: translateY(10px) rotate(240deg);
-  }
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
-  }
-}
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
 
 // Main styles
 .login-wrapper {
@@ -91,7 +8,7 @@ $border-radius-sm: 0.5rem;
   align-items: center;
   justify-content: center;
   position: relative;
-  background: $bg-gradient;
+  @include gradient-bg($primary-blue, $secondary-blue);
   padding: 1rem;
   overflow: hidden;
 }
@@ -121,7 +38,8 @@ $border-radius-sm: 0.5rem;
         height: 120px;
         background: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
-        animation: float 6s ease-in-out infinite;
+        @include animation(float);
+        animation-duration: 6s;
       }
 
       &.shape-2 {
@@ -131,7 +49,9 @@ $border-radius-sm: 0.5rem;
         height: 80px;
         background: rgba(255, 255, 255, 0.15);
         border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-        animation: float 8s ease-in-out infinite reverse;
+        @include animation(float);
+        animation-duration: 8s;
+        animation-direction: reverse;
       }
 
       &.shape-3 {
@@ -141,7 +61,8 @@ $border-radius-sm: 0.5rem;
         height: 60px;
         background: rgba(255, 255, 255, 0.1);
         transform: rotate(45deg);
-        animation: float 7s ease-in-out infinite;
+        @include animation(float);
+        animation-duration: 7s;
       }
     }
   }
@@ -153,10 +74,10 @@ $border-radius-sm: 0.5rem;
   background: $bg-primary;
   padding: 3rem 2.5rem;
   border-radius: $border-radius;
-  box-shadow: $shadow-xl;
+  @include shadow(xl);
   width: 100%;
   max-width: 450px;
-  animation: slideInUp 0.6s ease-out;
+  @include animation(slideInUp);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -175,19 +96,19 @@ $border-radius-sm: 0.5rem;
     .logo-icon {
       width: 48px;
       height: 48px;
-      background: $bg-gradient;
-      border-radius: 12px;
+      @include gradient-bg($primary-blue, $secondary-blue);
+      border-radius: $border-radius-sm;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      box-shadow: $shadow-md;
+      color: $white;
+      @include shadow(md);
     }
 
     h1 {
       font-size: 1.875rem;
       font-weight: 700;
-      background: $bg-gradient;
+      @include gradient-bg($primary-blue, $secondary-blue);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -241,20 +162,12 @@ $border-radius-sm: 0.5rem;
 
       .form-input {
         width: 100%;
-        padding: 0.875rem 1rem 0.875rem 3rem;
-        border: 2px solid $border-color;
-        border-radius: $border-radius-sm;
-        font-size: 0.95rem;
-        transition: all 0.2s ease;
+        @include input-base;
+        padding-left: 3rem;
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(5px);
 
-        &::placeholder {
-          color: $text-light;
-        }
-
         &:focus {
-          outline: none;
           border-color: $border-focus;
           box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 
@@ -264,8 +177,8 @@ $border-radius-sm: 0.5rem;
         }
 
         &.error {
-          border-color: $error-color;
-          animation: shake 0.5s ease-in-out;
+          border-color: $danger-red;
+          @include animation(shake);
 
           &:focus {
             box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
@@ -277,35 +190,12 @@ $border-radius-sm: 0.5rem;
 
   .login-button {
     width: 100%;
-    padding: 0.875rem 1.5rem;
-    background: $bg-gradient;
-    color: white;
-    border: none;
-    border-radius: $border-radius-sm;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    @include button-primary($primary-blue, $secondary-blue);
+    margin-bottom: 1.5rem;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.5rem;
-
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: $shadow-lg;
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
 
     .button-text {
       transition: opacity 0.2s ease;
@@ -318,9 +208,9 @@ $border-radius-sm: 0.5rem;
         width: 20px;
         height: 20px;
         border: 2px solid rgba(255, 255, 255, 0.3);
-        border-top: 2px solid white;
+        border-top: 2px solid $white;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
+        @include animation(spin);
       }
     }
 
@@ -340,11 +230,12 @@ $border-radius-sm: 0.5rem;
       gap: 0.5rem;
       padding: 0.75rem 1rem;
       background: rgba(245, 101, 101, 0.1);
-      color: $error-color;
+      color: $danger-red;
       border: 1px solid rgba(245, 101, 101, 0.2);
       border-radius: $border-radius-sm;
       font-size: 0.875rem;
-      animation: slideInUp 0.3s ease-out;
+      @include animation(slideInUp);
+      animation-duration: 0.3s;
 
       svg {
         flex-shrink: 0;
@@ -353,6 +244,7 @@ $border-radius-sm: 0.5rem;
   }
 }
 
+// Responsive Design
 @media (max-width: 768px) {
   .login-container {
     padding: 2rem 1.5rem;

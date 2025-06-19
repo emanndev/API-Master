@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables" as *;
 
 @mixin button-primary($bg-start, $bg-end, $color: $white) {
   background: linear-gradient(135deg, $bg-start 0%, $bg-end 100%);
