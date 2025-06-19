@@ -10,7 +10,7 @@ export class SanitizerService {
   sanitizeUrl(url: string): SafeUrl {
     // Basic check to prevent javascript: URLs from being loaded (security risk - XSS)
     if (url && !url.match(/^(https?:\/\/|data:image\/)/)) {
-      return this.sanitizer.bypassSecurityTrustUrl(''); // Return empty safe URL
+      return this.sanitizer.bypassSecurityTrustUrl('');
     }
     return this.sanitizer.bypassSecurityTrustUrl(url || '');
   }

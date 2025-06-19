@@ -24,7 +24,7 @@ export class AuthService {
   login(username: string, password: string): Observable<AuthResponse> {
     // Simulated Login authentication
     if (username === 'testuser' && password === 'password123') {
-      const token = 'fake-jwt-token-123';
+      const token = 'fake-token-123';
       const user: User = { username, password };
       localStorage.setItem('authToken', token);
       this.tokenSubject.next(token);
