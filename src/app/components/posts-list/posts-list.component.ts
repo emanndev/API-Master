@@ -40,6 +40,7 @@ export class PostsListComponent implements OnInit {
   searchTerm: string = '';
   sortOrder: string = 'newest';
   showMessage = false;
+  isLoading: boolean = false;
 
   constructor(
     private apiService: ApiService,
@@ -53,6 +54,7 @@ export class PostsListComponent implements OnInit {
   }
 
   loadPosts() {
+    this.isLoading = true;
     this.apiService.getPosts().subscribe({
       next: (posts) => {
         console.log('Loaded posts:', posts);
@@ -64,8 +66,12 @@ export class PostsListComponent implements OnInit {
           ) as string,
         }));
         this.applyFilters();
+        this.isLoading = false;
       },
-      error: (err) => console.error('Failed to load posts:', err),
+      error: (err) => {
+        console.error('Failed to load posts:', err);
+        this.isLoading = false;
+      },
     });
   }
 
@@ -118,7 +124,7 @@ export class PostsListComponent implements OnInit {
   onPageChange(page: number) {
     if (page > 0 && page <= this.totalPages) {
       this.currentPage = page;
-      this.applyFilters();
+      this.loadPosts();
     }
   }
 
@@ -126,6 +132,7 @@ export class PostsListComponent implements OnInit {
     this.apiService.clearCache();
     this.showMessage = true;
     setTimeout(() => (this.showMessage = false), 3000);
+    this.loadPosts();
   }
 
   promptLogin() {
