@@ -1,0 +1,28 @@
+import { Injectable } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ErrorHandlingService {
+  handleError(error: any): Observable<never> {
+    let errorMessage = 'Error fetching data ';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      errorMessage = `Error Code: ${error.status}\nMessage: ${
+        error.message || 'Server error, could not get data'
+      }`;
+    }
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
+
+  retryRequest<T>(
+    observable: Observable<T>,
+    retries: number = 1
+  ): Observable<T> {
+    return observable.pipe(retry(retries));
+  }
+}

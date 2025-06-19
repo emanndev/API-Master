@@ -1,72 +1,389 @@
-.posts-list {
-  max-width: 800px;
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+// Main container
+.posts-grid {
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem 1.5rem;
+  min-height: 100vh;
+  background: $bg-secondary;
 
   h2 {
-    color: #333;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: $text-primary;
     text-align: center;
-    margin-bottom: 20px;
-  }
+    margin-bottom: 3rem;
+    position: relative;
 
-  .post-item {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 15px;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    h3 {
-      color: #2c3e50;
-      margin-bottom: 10px;
-    }
-
-    p {
-      color: #7f8c8d;
-      margin-bottom: 10px;
-    }
-
-    a {
-      color: #3498db;
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, $primary-blue, $secondary-blue);
+      border-radius: 2px;
     }
   }
 
+  // Controls section
   .controls {
+    background: $bg-primary;
+    padding: 1.5rem;
+    border-radius: $border-radius-lg;
+    @include shadow(sm);
+    margin-bottom: 2.5rem;
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
     flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    border: 1px solid $border-light;
 
     .search-bar {
       flex: 1;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      min-width: 250px;
+      @include input-base;
+      background: $bg-secondary;
+
+      &:focus {
+        border-color: $primary-blue;
+        background: $bg-primary;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
     }
 
     .filter-select,
     .sort-select {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      border: 2px solid $border-color;
+      border-radius: $border-radius-sm;
+      background: $bg-primary;
+      color: $text-primary;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 140px;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-blue;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      &:hover {
+        border-color: $primary-dark-blue;
+      }
+    }
+
+    .create-button {
+      @include button-primary($accent-green, $success-dark-green);
+      text-decoration: none;
+
+      &.disabled {
+        background: $text-light;
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
+      }
+    }
+
+    .login-button {
+      @include button-primary($primary-blue, $secondary-blue);
+    }
+
+    .logout-button {
+      @include button-primary($warning-orange, $warning-dark-orange);
     }
   }
 
-  @media (max-width: 768px) {
-    padding: 10px;
+  // Posts container
+  .posts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .post-item {
+    background: $bg-primary;
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+    @include shadow(sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid $border-light;
+    position: relative;
+
+    &:hover {
+      transform: translateY(-4px);
+      @include shadow(lg);
+      border-color: rgba(102, 126, 234, 0.2);
+    }
+
+    .post-image {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      background: $bg-tertiary;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+    }
+
+    h3,
+    p {
+      padding-inline: 20px;
+    }
+
+    > .read-more {
+      padding-inline: 2.5rem;
+      padding-right: 1.5rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: $text-primary;
+      margin: 1.25rem 0 0.75rem 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    p {
+      color: $text-secondary;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: $primary-blue;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      padding: 0.5rem 1.5rem;
+      border-radius: $border-radius-sm;
+      transition: all 0.2s ease;
+      position: relative;
+
+      &::after {
+        content: "→";
+        transition: transform 0.2s ease;
+      }
+
+      &:hover {
+        background: rgba(102, 126, 234, 0.1);
+        transform: translateX(2px);
+
+        &::after {
+          transform: translateX(3px);
+        }
+      }
+    }
+  }
+
+  // Pagination styling
+  app-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  // Clear cache button
+  .clear-cache-btn {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    width: 56px;
+    height: 56px;
+    @include gradient-bg($danger-red, $danger-dark-red);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include shadow(md);
+    transition: all 0.2s ease;
+    z-index: 100;
+
+    &:hover {
+      transform: scale(1.1);
+      @include shadow(lg);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    img {
+      color: $white;
+      width: 35px;
+      height: 35px;
+    }
+  }
+
+  // Cache message
+  .cache-message {
+    position: fixed;
+    bottom: 6rem;
+    left: 2rem;
+    @include gradient-bg($accent-green, $success-dark-green);
+    color: $white;
+    padding: 0.75rem 1rem;
+    border-radius: $border-radius-sm;
+    @include shadow(md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    z-index: 100;
+  }
+
+  // Animation
+  .fade-in {
+    @include animation(fadeInUp);
+  }
+
+  .slide-in {
+    @include animation(slideInLeft);
+  }
+
+  .slide-up {
+    @include animation(slideInUp);
+    animation-fill-mode: both;
+  }
+}
+
+@media (max-width: 1024px) {
+  .posts-grid {
+    .posts-container {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .posts-grid {
+    padding: 1rem;
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
     .controls {
       flex-direction: column;
-      gap: 5px;
+      align-items: stretch;
+      gap: 0.75rem;
+
+      .search-bar {
+        min-width: auto;
+      }
+
+      .filter-select,
+      .sort-select {
+        min-width: auto;
+      }
+    }
+
+    .posts-container {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .post-item {
+      .post-image {
+        height: 200px;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+        margin: 1rem 0 0.5rem 0;
+      }
+    }
+
+    .clear-cache-btn {
+      bottom: 1rem;
+      left: 1rem;
+      width: 48px;
+      height: 48px;
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .cache-message {
+      bottom: 4.5rem;
+      left: 1rem;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .posts-grid {
+    padding: 0.75rem;
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
+    .controls {
+      padding: 1rem;
+    }
+
+    .post-item {
+      > h3,
+      > p,
+      > .read-more {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .read-more {
+        margin-bottom: 1rem;
+      }
+    }
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .posts-grid {
+    .fade-in,
+    .slide-in,
+    .slide-up {
+      animation: none;
+    }
+
+    .post-item {
+      transition: box-shadow 0.2s ease;
+
+      &:hover {
+        transform: none;
+      }
+    }
+
+    .clear-cache-btn:hover {
+      transform: none;
     }
   }
 }

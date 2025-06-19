@@ -1,0 +1,125 @@
+<div class="create-post">
+  <div class="create-post-header">
+    <button class="back-btn" (click)="goBack()" title="Go Back">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <h2><i class="fa-solid fa-pen-to-square"></i> Create New Post</h2>
+  </div>
+
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="create-form">
+    <div
+      class="form-group"
+      [class.valid]="
+        postForm.get('title')?.valid && postForm.get('title')?.touched
+      "
+      [class.invalid]="
+        postForm.get('title')?.invalid && postForm.get('title')?.touched
+      "
+    >
+      <label for="title">Post Title</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        placeholder="Enter your post title..."
+        autocomplete="off"
+      />
+      <div
+        *ngIf="postForm.get('title')?.invalid && postForm.get('title')?.touched"
+        class="error"
+      >
+        <span *ngIf="postForm.get('title')?.errors?.['required']">
+          Title is required.
+        </span>
+        <span *ngIf="postForm.get('title')?.errors?.['minlength']">
+          Title must be at least 5 characters long.
+        </span>
+        <span *ngIf="postForm.get('title')?.errors?.['restrictedContent']">
+          {{ postForm.get('title')?.errors?.['restrictedContent'] }}
+        </span>
+      </div>
+    </div>
+
+    <div
+      class="form-group"
+      [class.valid]="
+        postForm.get('body')?.valid && postForm.get('body')?.touched
+      "
+      [class.invalid]="
+        postForm.get('body')?.invalid && postForm.get('body')?.touched
+      "
+    >
+      <label for="body">Post Content</label>
+      <textarea
+        id="body"
+        formControlName="body"
+        placeholder="Share your thoughts and ideas..."
+        rows="6"
+      ></textarea>
+      <div
+        *ngIf="postForm.get('body')?.invalid && postForm.get('body')?.touched"
+        class="error"
+      >
+        <span *ngIf="postForm.get('body')?.errors?.['required']">
+          Post content is required.
+        </span>
+        <span *ngIf="postForm.get('body')?.errors?.['minlength']">
+          Post content must be at least 20 characters long.
+        </span>
+        <span *ngIf="postForm.get('body')?.errors?.['restrictedContent']">
+          {{ postForm.get('body')?.errors?.['restrictedContent'] }}
+        </span>
+      </div>
+    </div>
+
+    <div
+      class="form-group"
+      [class.valid]="
+        postForm.get('imageUrl')?.valid && postForm.get('imageUrl')?.value
+      "
+      [class.invalid]="
+        postForm.get('imageUrl')?.invalid && postForm.get('imageUrl')?.touched
+      "
+    >
+      <label for="imageUrl">Image URL (Optional)</label>
+      <input
+        id="imageUrl"
+        type="url"
+        formControlName="imageUrl"
+        placeholder="https://example.com/image.jpg"
+        autocomplete="off"
+      />
+
+      <div *ngIf="imagePreview" class="image-preview">
+        <img
+          [src]="imagePreview"
+          alt="Image Preview"
+          (error)="handleImageError($event)"
+        />
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="postForm.invalid"
+      [class.loading]="isSubmitting"
+    >
+      <span *ngIf="!isSubmitting"
+        ><i class="fa-solid fa-file-circle-plus"> </i> Create Post
+      </span>
+      <span *ngIf="isSubmitting">Creating...</span>
+    </button>
+  </form>
+</div>
